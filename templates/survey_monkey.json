@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('survey') }}",
+    "operation": "{{ operation | default('getAll') }}"
+  },
+  "type": "n8n-nodes-base.surveyMonkey",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

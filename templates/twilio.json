@@ -1,0 +1,11 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('sms') }}",
+    "operation": "{{ operation | default('send') }}",
+    "message": "{{ message }}",
+    "to": "{{ to }}"
+  },
+  "type": "n8n-nodes-base.twilio",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

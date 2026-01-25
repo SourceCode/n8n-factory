@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "mode": "{{ mode | default('jsonToxml') }}",
+    "json": "{{ json }}"
+  },
+  "type": "n8n-nodes-base.xml",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

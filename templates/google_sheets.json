@@ -1,0 +1,18 @@
+{
+  "_meta": {
+    "required_params": ["operation", "sheetId", "range"]
+  },
+  "parameters": {
+    "operation": "{{ operation | default('read') }}",
+    "sheetId": {
+      "__rl": true,
+      "value": "{{ sheetId }}",
+      "mode": "list",
+      "cachedResultName": "{{ sheetId }}"
+    },
+    "range": "{{ range }}"
+  },
+  "type": "n8n-nodes-base.googleSheets",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

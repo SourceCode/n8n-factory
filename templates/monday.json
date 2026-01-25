@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('board') }}",
+    "operation": "{{ operation | default('getAll') }}"
+  },
+  "type": "n8n-nodes-base.mondayCom",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

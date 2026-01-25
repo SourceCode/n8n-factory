@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('message') }}",
+    "operation": "{{ operation | default('post') }}",
+    "message": "{{ message }}"
+  },
+  "type": "n8n-nodes-base.mattermost",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

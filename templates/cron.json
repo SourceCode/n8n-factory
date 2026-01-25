@@ -1,0 +1,14 @@
+{
+  "parameters": {
+    "triggerTimes": {
+      "item": [
+        {
+          "mode": "{{ mode | default('everyMinute') }}"
+        }
+      ]
+    }
+  },
+  "type": "n8n-nodes-base.cron",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

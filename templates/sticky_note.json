@@ -1,0 +1,14 @@
+{
+  "_meta": {
+    "required_params": ["content"]
+  },
+  "parameters": {
+    "content": "{{ content }}",
+    "height": {{ height | default(100) }},
+    "width": {{ width | default(250) }},
+    "color": "{{ color | default(7) }}"
+  },
+  "type": "n8n-nodes-base.stickyNote",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

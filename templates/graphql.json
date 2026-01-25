@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "requestFormat": "graphql",
+    "query": "{{ query }}"
+  },
+  "type": "n8n-nodes-base.graphql",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

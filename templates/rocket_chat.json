@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('message') }}",
+    "operation": "{{ operation | default('post') }}",
+    "text": "{{ text }}"
+  },
+  "type": "n8n-nodes-base.rocketChat",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

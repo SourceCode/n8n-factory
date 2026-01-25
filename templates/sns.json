@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "topic": "{{ topic }}",
+    "message": "{{ message }}",
+    "subject": "{{ subject | default('') }}"
+  },
+  "type": "n8n-nodes-base.awsSns",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

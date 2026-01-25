@@ -1,0 +1,16 @@
+name: "Simulation Test"
+steps:
+  - id: "start_webhook"
+    template: "webhook"
+    params:
+      path: "sim-test"
+      method: "POST"
+    mock:
+      body: { "userId": 123, "action": "login" }
+
+  - id: "process_data"
+    template: "code"
+    params:
+      code: "return items[0].json;"
+    mock:
+      result: "User 123 logged in successfully"

@@ -1,0 +1,141 @@
+{
+  "$defs": {
+    "RecipeStep": {
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "template": {
+          "title": "Template",
+          "type": "string"
+        },
+        "params": {
+          "additionalProperties": true,
+          "default": {},
+          "title": "Params",
+          "type": "object"
+        },
+        "mock": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mock"
+        },
+        "debug": {
+          "default": false,
+          "title": "Debug",
+          "type": "boolean"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "connections_from": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Connections From"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        }
+      },
+      "required": [
+        "id",
+        "template"
+      ],
+      "title": "RecipeStep",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "description": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Description"
+    },
+    "tags": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Tags",
+      "type": "array"
+    },
+    "globals": {
+      "additionalProperties": true,
+      "default": {},
+      "title": "Globals",
+      "type": "object"
+    },
+    "imports": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Imports",
+      "type": "array"
+    },
+    "steps": {
+      "items": {
+        "$ref": "#/$defs/RecipeStep"
+      },
+      "title": "Steps",
+      "type": "array"
+    }
+  },
+  "required": [
+    "name",
+    "steps"
+  ],
+  "title": "Recipe",
+  "type": "object"
+}

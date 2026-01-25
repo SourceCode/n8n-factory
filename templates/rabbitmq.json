@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "mode": "{{ mode | default('message') }}",
+    "queue": "{{ queue }}"
+  },
+  "type": "n8n-nodes-base.rabbitmq",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

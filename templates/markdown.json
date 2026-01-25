@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "operation": "htmlToMarkdown",
+    "html": "{{ html }}"
+  },
+  "type": "n8n-nodes-base.html",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

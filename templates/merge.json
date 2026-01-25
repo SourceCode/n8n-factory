@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "mode": "{{ mode | default('append') }}"
+  },
+  "type": "n8n-nodes-base.merge",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

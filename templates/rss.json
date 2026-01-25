@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "url": "{{ url }}"
+  },
+  "type": "n8n-nodes-base.rssFeedRead",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

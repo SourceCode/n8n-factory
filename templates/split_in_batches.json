@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "batchSize": {{ batchSize | default(10) }},
+    "options": {}
+  },
+  "type": "n8n-nodes-base.splitInBatches",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

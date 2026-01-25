@@ -1,0 +1,11 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('repository') }}",
+    "operation": "{{ operation | default('get') }}",
+    "owner": "{{ owner }}",
+    "repository": "{{ repository }}"
+  },
+  "type": "n8n-nodes-base.github",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

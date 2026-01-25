@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('message') }}",
+    "operation": "{{ operation | default('push') }}",
+    "message": "{{ message }}"
+  },
+  "type": "n8n-nodes-base.line",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

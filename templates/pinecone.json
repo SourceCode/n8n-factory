@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "operation": "{{ operation | default('upsert') }}",
+    "indexName": "{{ indexName }}",
+    "namespace": "{{ namespace }}"
+  },
+  "type": "n8n-nodes-base.pinecone",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "operation": "{{ operation | default('upload') }}",
+    "binaryPropertyName": "{{ binaryPropertyName }}",
+    "fileName": "{{ fileName }}"
+  },
+  "type": "n8n-nodes-base.box",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

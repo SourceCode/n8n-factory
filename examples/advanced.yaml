@@ -1,0 +1,61 @@
+name: "Advanced Data Processing"
+description: "Demonstrates loops, globals, and external mocks."
+tags: ["example", "advanced"]
+globals:
+  api_base: "https://api.example.com/v2"
+
+steps:
+  - id: "start"
+    template: "start"
+  
+  - id: "fetch_users"
+    template: "http_request"
+    params:
+      url: "{{ api_base }}/users"
+      method: "GET"
+    mock:
+      - json: { "id": 1, "name": "Alice" }
+      - json: { "id": 2, "name": "Bob" }
+      - json: { "id": 3, "name": "Charlie" }
+
+  - id: "loop_start"
+    template: "split_in_batches"
+    params:
+      batchSize: 1
+    notes: "Process one user at a time"
+
+  - id: "process_user"
+    template: "code"
+    params:
+      code: "items[0].json.processed = true; return items;"
+    connections_from: ["loop_start"]
+
+  - id: "filter_active"
+    template: "if"
+    params:
+      left: "={{ $json.active }}"
+      right: "true"
+    retry:
+      maxTries: 3
+      waitBetweenTries: 500
+
+  # Loop back
+  # In n8n factory, loops require explicit wiring back to the splitInBatches node?
+  # The layout/assembler supports cycles if explicit.
+  # But SplitInBatches usually takes input from "loop_start" (itself) on 2nd iteration?
+  # Actually, the loop closes by connecting the end of chain back to "loop_start".
+  
+  # For this example, let's keep it linear for simplicity of factory structure
+  # unless we explicitly wire back.
+  
+  - id: "loop_back"
+    template: "code" # Placeholder for end of loop logic
+    params:
+      code: "return items;"
+    connections_from: ["filter_active"]
+    # Explicit cycle?
+    # connections_from: ["filter_active"] -> connects to "loop_start"
+    # But current assembler might flag cycle error unless suppressed?
+    # Cycle detection raises ValueError.
+    # So we can't easily model loops yet without 'allow_cycles' flag or similar.
+    # Leaving linear for now.

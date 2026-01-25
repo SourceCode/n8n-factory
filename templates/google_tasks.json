@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('task') }}",
+    "operation": "{{ operation | default('create') }}",
+    "title": "{{ title }}"
+  },
+  "type": "n8n-nodes-base.googleTasks",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

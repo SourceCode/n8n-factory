@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "roomId": "{{ roomId }}",
+    "text": "{{ text }}"
+  },
+  "type": "n8n-nodes-base.matrix",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

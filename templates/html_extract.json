@@ -1,0 +1,17 @@
+{
+  "parameters": {
+    "sourceData": "{{ sourceData | default('json') }}",
+    "dataPropertyName": "{{ dataPropertyName | default('data') }}",
+    "extractionValues": {
+      "values": [
+        {
+          "key": "{{ key }}",
+          "cssSelector": "{{ cssSelector }}"
+        }
+      ]
+    }
+  },
+  "type": "n8n-nodes-base.htmlExtract",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

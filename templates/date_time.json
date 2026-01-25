@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "action": "{{ action | default('format') }}",
+    "value": "{{ value }}",
+    "format": "{{ format | default('YYYY-MM-DD') }}"
+  },
+  "type": "n8n-nodes-base.dateTime",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

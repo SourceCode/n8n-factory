@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "project": "{{ project }}",
+    "issueType": "{{ issueType | default('Task') }}",
+    "summary": "{{ summary }}"
+  },
+  "type": "n8n-nodes-base.jira",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('contact') }}",
+    "operation": "{{ operation | default('create') }}",
+    "email": "{{ email }}"
+  },
+  "type": "n8n-nodes-base.activeCampaign",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

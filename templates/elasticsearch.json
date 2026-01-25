@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "operation": "{{ operation | default('search') }}",
+    "index": "{{ index }}",
+    "query": "{{ query }}"
+  },
+  "type": "n8n-nodes-base.elasticsearch",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

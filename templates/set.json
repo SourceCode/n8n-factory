@@ -1,0 +1,21 @@
+{
+  "parameters": {
+    "assignments": {
+      "assignments": [
+        {
+          "id": "assignment-0",
+          "name": "{{ name }}",
+          "value": "{{ value }}",
+          "type": "string"
+        }
+      ]
+    },
+    "options": {}
+  },
+  "type": "n8n-nodes-base.set",
+  "typeVersion": 3.2,
+  "position": [
+    0,
+    0
+  ]
+}

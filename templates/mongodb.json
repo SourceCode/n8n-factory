@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "operation": "{{ operation | default('find') }}",
+    "collection": "{{ collection }}"
+  },
+  "type": "n8n-nodes-base.mongoDb",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

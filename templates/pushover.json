@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "userKey": "{{ userKey }}",
+    "token": "{{ token }}",
+    "message": "{{ message }}"
+  },
+  "type": "n8n-nodes-base.pushover",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

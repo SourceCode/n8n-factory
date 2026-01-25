@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('invoice') }}",
+    "operation": "{{ operation | default('create') }}"
+  },
+  "type": "n8n-nodes-base.quickBooks",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

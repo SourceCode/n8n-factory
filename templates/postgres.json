@@ -1,0 +1,24 @@
+{
+  "_meta": {
+    "required_params": ["operation", "schema", "table"]
+  },
+  "parameters": {
+    "operation": "{{ operation }}",
+    "schema": {
+      "__rl": true,
+      "value": "{{ schema }}",
+      "mode": "list",
+      "cachedResultName": "{{ schema }}"
+    },
+    "table": {
+      "__rl": true,
+      "value": "{{ table }}",
+      "mode": "list",
+      "cachedResultName": "{{ table }}"
+    },
+    "columns": "{{ columns | default('') }}"
+  },
+  "type": "n8n-nodes-base.postgres",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

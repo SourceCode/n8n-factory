@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "operation": "upsert",
+    "collection": "{{ collection }}",
+    "vectors": "={{ '{{' }} $json.vectors }}"
+  },
+  "type": "n8n-nodes-base.qdrant",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

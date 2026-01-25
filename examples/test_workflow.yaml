@@ -1,0 +1,13 @@
+name: "Test Build Workflow"
+steps:
+  - id: "start_webhook"
+    template: "webhook"
+    params:
+      path: "test-trigger"
+      method: "POST"
+      uuid: "1234-5678"
+
+  - id: "process_data"
+    template: "code"
+    params:
+      code: "return items[0].json;"

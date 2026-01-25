@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('incident') }}",
+    "operation": "{{ operation | default('create') }}",
+    "title": "{{ title }}"
+  },
+  "type": "n8n-nodes-base.pagerDuty",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

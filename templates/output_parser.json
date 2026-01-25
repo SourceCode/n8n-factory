@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "jsCode": "const response = items[0].json.response;\n// Mock parser\nreturn [{json: {parsed: response.trim()}}];"
+  },
+  "type": "n8n-nodes-base.code",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

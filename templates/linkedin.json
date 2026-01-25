@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('post') }}",
+    "operation": "{{ operation | default('create') }}",
+    "text": "{{ text }}"
+  },
+  "type": "n8n-nodes-base.linkedIn",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

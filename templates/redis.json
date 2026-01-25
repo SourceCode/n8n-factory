@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "operation": "{{ operation | default('get') }}",
+    "key": "{{ key }}"
+  },
+  "type": "n8n-nodes-base.redis",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

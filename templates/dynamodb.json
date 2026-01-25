@@ -1,0 +1,11 @@
+{
+  "parameters": {
+    "operation": "{{ operation | default('put') }}",
+    "tableName": "{{ tableName }}",
+    "partitionKey": "{{ partitionKey }}",
+    "value": "{{ value | default('') }}"
+  },
+  "type": "n8n-nodes-base.awsDynamoDb",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

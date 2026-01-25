@@ -1,0 +1,155 @@
+{
+  "name": "Master Production Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "prod-trigger",
+        "httpMethod": "POST",
+        "responseCode": 200,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "",
+      "name": "entry"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assignment-1",
+              "name": "workflow_version",
+              "value": "1.0.0",
+              "type": "string"
+            },
+            {
+              "id": "assignment-2",
+              "name": "env",
+              "value": "production",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        0,
+        0
+      ],
+      "name": "merged_set_1"
+    },
+    {
+      "parameters": {
+        "url": "https://api.example.com/check",
+        "method": "GET",
+        "authentication": "none",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        0,
+        0
+      ],
+      "name": "fetch_external_data"
+    },
+    {
+      "parameters": {
+        "amount": "5",
+        "unit": "seconds"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "name": "cooldown"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-0",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "success",
+              "operator": "equal",
+              "type": "string"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "name": "final_check"
+    }
+  ],
+  "connections": {
+    "entry": {
+      "main": [
+        [
+          {
+            "node": "merged_set_1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "merged_set_1": {
+      "main": [
+        [
+          {
+            "node": "fetch_external_data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fetch_external_data": {
+      "main": [
+        [
+          {
+            "node": "cooldown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cooldown": {
+      "main": [
+        [
+          {
+            "node": "final_check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "meta": {
+    "instanceId": "generated_by_n8n_factory"
+  }
+}

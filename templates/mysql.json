@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "operation": "{{ operation | default('executeQuery') }}",
+    "query": "{{ query }}"
+  },
+  "type": "n8n-nodes-base.mySql",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

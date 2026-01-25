@@ -1,0 +1,11 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('post') }}",
+    "operation": "{{ operation | default('create') }}",
+    "subreddit": "{{ subreddit }}",
+    "title": "{{ title }}"
+  },
+  "type": "n8n-nodes-base.reddit",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

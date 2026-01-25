@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "jsCode": "const text = items[0].json.text;\nconst chunkSize = {{ chunkSize | default(1000) }};\nconst chunks = [];\nfor (let i = 0; i < text.length; i += chunkSize) {\n  chunks.push({json: {text: text.substring(i, i + chunkSize)}});\n}\nreturn chunks;"
+  },
+  "type": "n8n-nodes-base.code",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "operation": "{{ operation | default('create') }}",
+    "title": "{{ title }}",
+    "content": "{{ content }}"
+  },
+  "type": "n8n-nodes-base.googleDocs",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

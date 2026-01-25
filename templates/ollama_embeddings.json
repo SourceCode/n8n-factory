@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "resource": "embeddings",
+    "model": "{{ model | default('llama2') }}",
+    "prompt": "{{ text }}"
+  },
+  "type": "n8n-nodes-base.ollama",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

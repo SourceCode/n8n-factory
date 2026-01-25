@@ -1,0 +1,19 @@
+name: "Debug Feature Test"
+steps:
+  - id: "webhook_start"
+    template: "webhook"
+    params:
+      path: "debug-test"
+      method: "GET"
+
+  - id: "set_data"
+    template: "set"
+    params:
+      name: "status"
+      value: "active"
+    debug: true
+
+  - id: "final_step"
+    template: "code"
+    params:
+      code: "return items;"

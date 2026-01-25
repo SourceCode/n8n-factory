@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "operation": "{{ operation | default('upsert') }}",
+    "collection": "{{ collection }}"
+  },
+  "type": "n8n-nodes-base.qdrant",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

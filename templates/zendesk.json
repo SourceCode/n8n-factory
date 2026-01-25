@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('ticket') }}",
+    "operation": "{{ operation | default('create') }}",
+    "description": "{{ description }}"
+  },
+  "type": "n8n-nodes-base.zendesk",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "mergeBy": "{{ mergeBy }}"
+  },
+  "type": "n8n-nodes-base.compareDatasets",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

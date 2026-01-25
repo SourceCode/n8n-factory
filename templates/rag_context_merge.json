@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "mode": "combine",
+    "combinationMode": "mergeByPosition",
+    "options": {}
+  },
+  "type": "n8n-nodes-base.merge",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

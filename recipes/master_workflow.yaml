@@ -1,0 +1,44 @@
+name: "Master Production Workflow"
+steps:
+  - id: "entry"
+    template: "webhook"
+    params:
+      path: "prod-trigger"
+      method: "POST"
+    mock:
+      body: { "status": "pending", "priority": "high" }
+
+  - id: "init_var_1"
+    template: "set"
+    params:
+      name: "workflow_version"
+      value: "1.0.0"
+
+  - id: "init_var_2"
+    template: "set"
+    params:
+      name: "env"
+      value: "production"
+    debug: true
+
+  - id: "fetch_external_data"
+    template: "http_request"
+    params:
+      url: "https://api.example.com/check"
+      method: "GET"
+    mock:
+      status: "success"
+      data: { "id": "task_99" }
+
+  - id: "cooldown"
+    template: "wait"
+    params:
+      amount: 5
+      unit: "seconds"
+
+  - id: "final_check"
+    template: "if"
+    params:
+      left: "={{ $json.status }}"
+      right: "success"
+      operator: "equal"

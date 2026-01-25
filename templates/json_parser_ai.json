@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "jsCode": "const content = items[0].json.content;\ntry {\n  const json = JSON.parse(content.match(/\\\{.*\\}/s)[0]);\n  return [{json: json}];\n} catch (e) {\n  return [{json: {error: 'Failed to parse JSON'}}];\n}"
+  },
+  "type": "n8n-nodes-base.code",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

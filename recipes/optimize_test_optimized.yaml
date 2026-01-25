@@ -1,0 +1,27 @@
+name: Optimization Test
+steps:
+- id: step1
+  template: webhook
+  params:
+    path: opt-test
+    method: POST
+  mock: null
+  description: null
+- id: merged_set_1
+  template: set_multi
+  params:
+    items:
+    - name: var1
+      value: value1
+    - name: var2
+      value: value2
+    - name: var3
+      value: value3
+  mock: null
+  description: Merged by Optimizer
+- id: step_end
+  template: code
+  params:
+    code: return items;
+  mock: null
+  description: null

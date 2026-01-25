@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('report') }}",
+    "operation": "{{ operation | default('get') }}"
+  },
+  "type": "n8n-nodes-base.googleAnalytics",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

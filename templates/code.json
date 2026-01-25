@@ -1,0 +1,11 @@
+{
+  "parameters": {
+    "jsCode": "{{ code }}"
+  },
+  "type": "n8n-nodes-base.code",
+  "typeVersion": 2,
+  "position": [
+    0,
+    0
+  ]
+}

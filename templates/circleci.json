@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('build') }}",
+    "operation": "{{ operation | default('trigger') }}",
+    "projectSlug": "{{ projectSlug }}"
+  },
+  "type": "n8n-nodes-base.circleCi",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

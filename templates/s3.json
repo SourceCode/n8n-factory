@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "operation": "{{ operation | default('download') }}",
+    "bucketName": "{{ bucketName }}",
+    "fileKey": "{{ fileKey }}"
+  },
+  "type": "n8n-nodes-base.awsS3",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "functionName": "{{ functionName }}",
+    "payload": "{{ payload }}"
+  },
+  "type": "n8n-nodes-base.awsLambda",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

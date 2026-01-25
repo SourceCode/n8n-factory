@@ -1,0 +1,16 @@
+{
+  "parameters": {
+    "conditions": {
+      "boolean": [
+        {
+          "value1": "={{ $json.value }}",
+          "value2": "{{ value }}",
+          "operator": "{{ operator | default('equal') }}"
+        }
+      ]
+    }
+  },
+  "type": "n8n-nodes-base.filter",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

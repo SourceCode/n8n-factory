@@ -1,0 +1,105 @@
+{
+  "name": "Debug Feature Test",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "debug-test",
+        "httpMethod": "GET",
+        "responseCode": 200,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "",
+      "name": "webhook_start"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assignment-0",
+              "name": "status",
+              "value": "active",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        0,
+        0
+      ],
+      "name": "set_data"
+    },
+    {
+      "parameters": {
+        "jsCode": "// DEBUG NODE for step: set_data\n// Captures data flowing through this point\nconsole.log('DEBUG [set_data]:', items);\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "name": "debug_set_data"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "name": "final_step"
+    }
+  ],
+  "connections": {
+    "webhook_start": {
+      "main": [
+        [
+          {
+            "node": "set_data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "set_data": {
+      "main": [
+        [
+          {
+            "node": "debug_set_data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "debug_set_data": {
+      "main": [
+        [
+          {
+            "node": "final_step",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "meta": {
+    "instanceId": "generated_by_n8n_factory"
+  }
+}

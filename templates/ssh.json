@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "command": "{{ command }}"
+  },
+  "type": "n8n-nodes-base.ssh",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

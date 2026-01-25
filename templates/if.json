@@ -1,0 +1,25 @@
+{
+  "parameters": {
+    "conditions": {
+      "options": {
+        "caseSensitive": true,
+        "leftValue": "",
+        "typeValidation": "strict"
+      },
+      "conditions": [
+        {
+          "id": "condition-0",
+          "leftValue": "{{ left }}",
+          "rightValue": "{{ right }}",
+          "operator": "{{ operator | default('equal') }}",
+          "type": "string"
+        }
+      ],
+      "combinator": "and"
+    },
+    "options": {}
+  },
+  "type": "n8n-nodes-base.if",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

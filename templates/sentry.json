@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('event') }}",
+    "operation": "{{ operation | default('getAll') }}"
+  },
+  "type": "n8n-nodes-base.sentryIo",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "chatId": "{{ chatId }}",
+    "text": "{{ text }}",
+    "additionalFields": {}
+  },
+  "type": "n8n-nodes-base.telegram",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

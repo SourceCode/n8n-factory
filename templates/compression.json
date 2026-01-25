@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "operation": "{{ operation | default('compress') }}",
+    "binaryPropertyName": "{{ binaryPropertyName }}"
+  },
+  "type": "n8n-nodes-base.compression",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

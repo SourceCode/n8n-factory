@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('build') }}",
+    "operation": "{{ operation | default('getAll') }}"
+  },
+  "type": "n8n-nodes-base.jenkins",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

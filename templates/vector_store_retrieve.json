@@ -1,0 +1,11 @@
+{
+  "parameters": {
+    "operation": "search",
+    "collection": "{{ collection }}",
+    "vector": "={{ '{{' }} $json.vector }}",
+    "limit": {{ limit | default(5) }}
+  },
+  "type": "n8n-nodes-base.qdrant",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

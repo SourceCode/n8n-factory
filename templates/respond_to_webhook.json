@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "respondWith": "{{ respondWith | default('json') }}",
+    "responseBody": "{{ responseBody }}"
+  },
+  "type": "n8n-nodes-base.respondToWebhook",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

@@ -1,0 +1,13 @@
+{
+  "_meta": {
+    "required_params": ["text", "channel"]
+  },
+  "parameters": {
+    "channel": "{{ channel }}",
+    "text": "{{ text }}",
+    "otherOptions": {}
+  },
+  "type": "n8n-nodes-base.slack",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

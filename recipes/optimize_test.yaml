@@ -1,0 +1,30 @@
+name: "Optimization Test"
+steps:
+  - id: "step1"
+    template: "webhook"
+    params:
+      path: "opt-test"
+      method: "POST"
+
+  - id: "set_var_1"
+    template: "set"
+    params:
+      name: "var1"
+      value: "value1"
+
+  - id: "set_var_2"
+    template: "set"
+    params:
+      name: "var2"
+      value: "value2"
+
+  - id: "set_var_3"
+    template: "set"
+    params:
+      name: "var3"
+      value: "value3"
+
+  - id: "step_end"
+    template: "code"
+    params:
+      code: "return items;"

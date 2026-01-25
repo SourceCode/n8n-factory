@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "operation": "{{ operation | default('upload') }}",
+    "fileContent": "{{ fileContent }}",
+    "name": "{{ name }}"
+  },
+  "type": "n8n-nodes-base.googleDrive",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

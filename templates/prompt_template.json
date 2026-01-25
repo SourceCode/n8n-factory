@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "jsCode": "const template = 'Hello {{ name }}, welcome to {{ place }}';\nreturn [{json: {prompt: template.replace('{{ name }}', '{{ name }}').replace('{{ place }}', '{{ place }}')}}];"
+  },
+  "type": "n8n-nodes-base.code",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

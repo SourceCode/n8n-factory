@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('event') }}",
+    "operation": "{{ operation | default('getAll') }}"
+  },
+  "type": "n8n-nodes-base.googleCalendar",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('database') }}",
+    "operation": "{{ operation | default('executeQuery') }}",
+    "query": "{{ query }}"
+  },
+  "type": "n8n-nodes-base.snowflake",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

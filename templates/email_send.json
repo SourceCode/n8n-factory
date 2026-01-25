@@ -1,0 +1,11 @@
+{
+  "parameters": {
+    "fromEmail": "{{ fromEmail }}",
+    "toEmail": "{{ toEmail }}",
+    "subject": "{{ subject }}",
+    "text": "{{ text }}"
+  },
+  "type": "n8n-nodes-base.emailSend",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

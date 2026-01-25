@@ -1,0 +1,15 @@
+{
+  "parameters": {
+    "keys": {
+      "key": [
+        {
+          "currentKey": "{{ currentKey }}",
+          "newKey": "{{ newKey }}"
+        }
+      ]
+    }
+  },
+  "type": "n8n-nodes-base.renameKeys",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

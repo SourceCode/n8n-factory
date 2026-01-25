@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "jsCode": "const history = items[0].json.history || [];\nhistory.push({role: 'user', content: '{{ input }}'});\nreturn [{json: {history}}];"
+  },
+  "type": "n8n-nodes-base.code",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

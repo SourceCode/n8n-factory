@@ -1,0 +1,14 @@
+{
+  "parameters": {
+    "url": "{{ url }}",
+    "method": "{{ method | default('GET') }}",
+    "authentication": "none",
+    "options": {}
+  },
+  "type": "n8n-nodes-base.httpRequest",
+  "typeVersion": 4.1,
+  "position": [
+    0,
+    0
+  ]
+}

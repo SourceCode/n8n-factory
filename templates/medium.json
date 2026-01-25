@@ -1,0 +1,12 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('post') }}",
+    "operation": "{{ operation | default('create') }}",
+    "title": "{{ title }}",
+    "contentFormat": "html",
+    "content": "{{ content }}"
+  },
+  "type": "n8n-nodes-base.medium",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

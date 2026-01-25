@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "operation": "{{ operation | default('post') }}",
+    "text": "{{ text }}"
+  },
+  "type": "n8n-nodes-base.twitter",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

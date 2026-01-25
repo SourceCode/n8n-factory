@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "errorMessage": "{{ message }}"
+  },
+  "type": "n8n-nodes-base.stopAndError",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

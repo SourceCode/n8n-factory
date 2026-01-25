@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "operation": "{{ operation | default('upload') }}",
+    "binaryPropertyName": "{{ binaryPropertyName }}",
+    "path": "{{ path }}"
+  },
+  "type": "n8n-nodes-base.dropbox",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

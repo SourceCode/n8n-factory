@@ -1,0 +1,15 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('databasePage') }}",
+    "operation": "{{ operation | default('create') }}",
+    "databaseId": {
+      "__rl": true,
+      "value": "{{ databaseId }}",
+      "mode": "list",
+      "cachedResultName": "{{ databaseId }}"
+    }
+  },
+  "type": "n8n-nodes-base.notion",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

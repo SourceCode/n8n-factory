@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "operation": "{{ operation | default('list') }}",
+    "path": "{{ path }}"
+  },
+  "type": "n8n-nodes-base.ftp",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

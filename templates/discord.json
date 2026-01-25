@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "webhookId": "{{ webhookId }}",
+    "content": "{{ content }}"
+  },
+  "type": "n8n-nodes-base.discord",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

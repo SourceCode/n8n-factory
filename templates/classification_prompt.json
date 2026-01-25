@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "resource": "completion",
+    "model": "{{ model | default('llama2') }}",
+    "prompt": "Classify the following text into categories: {{ categories }}.\n\nText: {{ text }}"
+  },
+  "type": "n8n-nodes-base.ollama",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "amount": "{{ amount }}",
+    "unit": "{{ unit | default('seconds') }}"
+  },
+  "type": "n8n-nodes-base.wait",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

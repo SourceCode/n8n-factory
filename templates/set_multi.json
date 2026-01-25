@@ -1,0 +1,23 @@
+{
+  "parameters": {
+    "assignments": {
+      "assignments": [
+        {% for item in items %}
+        {
+          "id": "assignment-{{ loop.index }}",
+          "name": "{{ item.name }}",
+          "value": "{{ item.value }}",
+          "type": "string"
+        }{{ "," if not loop.last }}
+        {% endfor %}
+      ]
+    },
+    "options": {}
+  },
+  "type": "n8n-nodes-base.set",
+  "typeVersion": 3.2,
+  "position": [
+    0,
+    0
+  ]
+}

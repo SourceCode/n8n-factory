@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "jsCode": "const text = items[0].json.text;\n// Simple mock sentiment\nconst sentiment = text.includes('good') ? 'positive' : 'negative';\nreturn [{json: {sentiment}}];"
+  },
+  "type": "n8n-nodes-base.code",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "resource": "completion",
+    "model": "{{ model | default('llama2') }}",
+    "prompt": "{{ prompt }}"
+  },
+  "type": "n8n-nodes-base.ollama",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

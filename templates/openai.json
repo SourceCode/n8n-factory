@@ -1,0 +1,11 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('chat') }}",
+    "operation": "{{ operation | default('create') }}",
+    "prompt": "{{ prompt }}",
+    "model": "{{ model | default('gpt-3.5-turbo') }}"
+  },
+  "type": "n8n-nodes-base.openAi",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

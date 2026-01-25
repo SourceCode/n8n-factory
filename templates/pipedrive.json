@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('deal') }}",
+    "operation": "{{ operation | default('getAll') }}"
+  },
+  "type": "n8n-nodes-base.pipedrive",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

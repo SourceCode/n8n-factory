@@ -1,0 +1,15 @@
+{
+  "parameters": {
+    "operation": "{{ operation | default('sort') }}",
+    "sortFieldsUi": {
+      "sortFields": [
+        {
+          "fieldName": "{{ fieldName }}"
+        }
+      ]
+    }
+  },
+  "type": "n8n-nodes-base.itemLists",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

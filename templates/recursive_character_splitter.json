@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "jsCode": "// Recursive splitting logic simulation\nreturn items.map(item => {\n  return {json: {chunks: item.json.text.split('\n\n')}}\n});"
+  },
+  "type": "n8n-nodes-base.code",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

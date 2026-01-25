@@ -1,0 +1,20 @@
+{
+  "parameters": {
+    "operation": "{{ operation | default('append') }}",
+    "baseId": {
+      "__rl": true,
+      "value": "{{ baseId }}",
+      "mode": "list",
+      "cachedResultName": "{{ baseId }}"
+    },
+    "tableId": {
+      "__rl": true,
+      "value": "{{ tableId }}",
+      "mode": "list",
+      "cachedResultName": "{{ tableId }}"
+    }
+  },
+  "type": "n8n-nodes-base.airtable",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

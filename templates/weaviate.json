@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "operation": "{{ operation | default('create') }}",
+    "className": "{{ className }}"
+  },
+  "type": "n8n-nodes-base.weaviate",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

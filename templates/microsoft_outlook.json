@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('message') }}",
+    "operation": "{{ operation | default('send') }}"
+  },
+  "type": "n8n-nodes-base.microsoftOutlook",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

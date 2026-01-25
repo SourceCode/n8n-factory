@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "fileName": "{{ fileName }}",
+    "binaryPropertyName": "{{ binaryPropertyName | default('data') }}"
+  },
+  "type": "n8n-nodes-base.writeBinaryFile",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

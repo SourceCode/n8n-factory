@@ -1,0 +1,17 @@
+{
+  "parameters": {
+    "url": "http://langchain-service/agent",
+    "method": "POST",
+    "bodyParametersUi": {
+      "parameter": [
+        {
+          "name": "input",
+          "value": "{{ input }}"
+        }
+      ]
+    }
+  },
+  "type": "n8n-nodes-base.httpRequest",
+  "typeVersion": 4.1,
+  "position": [0, 0]
+}

@@ -1,0 +1,14 @@
+{
+  "parameters": {
+    "listId": {
+      "__rl": true,
+      "value": "{{ listId }}",
+      "mode": "list",
+      "cachedResultName": "{{ listId }}"
+    },
+    "name": "{{ name }}"
+  },
+  "type": "n8n-nodes-base.trello",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

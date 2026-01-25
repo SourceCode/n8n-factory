@@ -1,0 +1,11 @@
+{
+  "parameters": {
+    "jsCode": "// DEBUG NODE for step: {{ source_step }}\n// Captures data flowing through this point\nconsole.log('DEBUG [{{ source_step }}]:', items);\nreturn items;"
+  },
+  "type": "n8n-nodes-base.code",
+  "typeVersion": 2,
+  "position": [
+    0,
+    0
+  ]
+}

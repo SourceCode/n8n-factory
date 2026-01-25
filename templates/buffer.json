@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "operation": "{{ operation | default('create') }}",
+    "text": "{{ text }}",
+    "profileId": "{{ profileId }}"
+  },
+  "type": "n8n-nodes-base.buffer",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

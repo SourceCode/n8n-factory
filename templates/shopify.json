@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('order') }}",
+    "operation": "{{ operation | default('getAll') }}"
+  },
+  "type": "n8n-nodes-base.shopify",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

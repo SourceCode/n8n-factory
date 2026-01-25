@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('meeting') }}",
+    "operation": "{{ operation | default('create') }}",
+    "topic": "{{ topic }}"
+  },
+  "type": "n8n-nodes-base.zoom",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

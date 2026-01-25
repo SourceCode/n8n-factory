@@ -1,0 +1,49 @@
+{
+  "name": "Test Build Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "test-trigger",
+        "httpMethod": "POST",
+        "responseCode": 200,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "1234-5678",
+      "name": "start_webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items[0].json;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "name": "process_data"
+    }
+  ],
+  "connections": {
+    "start_webhook": {
+      "main": [
+        [
+          {
+            "node": "process_data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "meta": {
+    "instanceId": "generated_by_n8n_factory"
+  }
+}

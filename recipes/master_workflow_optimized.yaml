@@ -1,0 +1,52 @@
+name: Master Production Workflow
+steps:
+- id: entry
+  template: webhook
+  params:
+    path: prod-trigger
+    method: POST
+  mock:
+    body:
+      status: pending
+      priority: high
+  debug: false
+  description: null
+- id: merged_set_1
+  template: set_multi
+  params:
+    items:
+    - name: workflow_version
+      value: 1.0.0
+    - name: env
+      value: production
+  mock: null
+  debug: false
+  description: Merged by Optimizer
+- id: fetch_external_data
+  template: http_request
+  params:
+    url: https://api.example.com/check
+    method: GET
+  mock:
+    status: success
+    data:
+      id: task_99
+  debug: false
+  description: null
+- id: cooldown
+  template: wait
+  params:
+    amount: 5
+    unit: seconds
+  mock: null
+  debug: false
+  description: null
+- id: final_check
+  template: if
+  params:
+    left: ={{ $json.status }}
+    right: success
+    operator: equal
+  mock: null
+  debug: false
+  description: null

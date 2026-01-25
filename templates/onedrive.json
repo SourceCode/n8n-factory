@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('file') }}",
+    "operation": "{{ operation | default('upload') }}",
+    "binaryPropertyName": "{{ binaryPropertyName | default('data') }}"
+  },
+  "type": "n8n-nodes-base.microsoftOneDrive",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

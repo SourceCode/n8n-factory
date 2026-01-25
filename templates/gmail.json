@@ -1,0 +1,14 @@
+{
+  "_meta": {
+    "required_params": ["operation"]
+  },
+  "parameters": {
+    "operation": "{{ operation | default('send') }}",
+    "subject": "{{ subject | default('') }}",
+    "message": "{{ message | default('') }}",
+    "toEmail": "{{ toEmail | default('') }}"
+  },
+  "type": "n8n-nodes-base.gmail",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

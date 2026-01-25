@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "url": "{{ url }}",
+    "responseFormat": "string",
+    "options": {}
+  },
+  "type": "n8n-nodes-base.httpRequest",
+  "typeVersion": 4.1,
+  "position": [0, 0]
+}

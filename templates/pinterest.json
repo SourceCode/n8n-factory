@@ -1,0 +1,11 @@
+{
+  "parameters": {
+    "resource": "{{ resource | default('pin') }}",
+    "operation": "{{ operation | default('create') }}",
+    "boardId": "{{ boardId }}",
+    "imageUrl": "{{ imageUrl }}"
+  },
+  "type": "n8n-nodes-base.pinterest",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

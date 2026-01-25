@@ -1,0 +1,18 @@
+{
+  "parameters": {
+    "dataType": "string",
+    "value1": "={{ $json.value }}",
+    "rules": {
+      "rules": [
+        {
+          "value2": "{{ match_value }}",
+          "output": 0
+        }
+      ]
+    },
+    "fallbackOutput": 1
+  },
+  "type": "n8n-nodes-base.switch",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

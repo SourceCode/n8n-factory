@@ -1,0 +1,9 @@
+{
+  "parameters": {
+    "topic": "{{ topic }}",
+    "message": "{{ message }}"
+  },
+  "type": "n8n-nodes-base.mqtt",
+  "typeVersion": 1,
+  "position": [0, 0]
+}
