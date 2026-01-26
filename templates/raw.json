@@ -1,0 +1,6 @@
+{
+  "parameters": {{ parameters | default({}) | tojson }},
+  "type": "{{ type }}",
+  "typeVersion": {{ typeVersion | default(1) }},
+  "position": {{ position | default([0, 0]) | tojson }}
+}

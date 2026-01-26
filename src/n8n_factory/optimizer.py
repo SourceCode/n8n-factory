@@ -1,11 +1,12 @@
 import copy
 import re
-from typing import List, Set
+from typing import List, Set, Dict, Any
 from .models import Recipe, RecipeStep
 from .logger import logger
 
 class WorkflowOptimizer:
     def optimize(self, recipe: Recipe) -> Recipe:
+        logger.debug(f"Starting optimization for recipe: {recipe.name}")
         optimized_recipe = copy.deepcopy(recipe)
         
         optimized_recipe.steps = self._merge_set_nodes(optimized_recipe.steps)
@@ -16,7 +17,65 @@ class WorkflowOptimizer:
         # Improvement #10: Description Audit
         self._audit_descriptions(optimized_recipe.steps, strict=recipe.strict)
         
+        logger.debug("Optimization complete.")
         return optimized_recipe
+
+    def refactor_json(self, workflow: Dict[str, Any], reinsert_edges: bool = False) -> Dict[str, Any]:
+        """
+        Refactors an existing n8n workflow JSON.
+        Can remove and re-insert edges based on node order.
+        """
+        logger.debug(f"Starting JSON refactor. reinsert_edges={reinsert_edges}")
+        
+        refactored = copy.deepcopy(workflow)
+        nodes = refactored.get("nodes", [])
+        
+        if reinsert_edges:
+            logger.info("Removing existing connections...")
+            refactored["connections"] = {}
+            
+            logger.info("Re-inserting edges based on node order...")
+            connections = {}
+            previous_node_name = None
+            
+            for i, node in enumerate(nodes):
+                node_name = node.get("name")
+                if not node_name:
+                    logger.warning(f"Node at index {i} has no name. Skipping connection logic.")
+                    continue
+                
+                logger.debug(f"Processing node {i}: {node_name} ({node.get('type')})")
+                
+                if previous_node_name:
+                    # Logic: Connect previous main output to current main input
+                    # NOTE: This assumes a simple linear flow. Complex branching is lost.
+                    logger.debug(f"Connecting {previous_node_name} -> {node_name}")
+                    
+                    if previous_node_name not in connections:
+                        connections[previous_node_name] = {}
+                    
+                    if "main" not in connections[previous_node_name]:
+                        connections[previous_node_name]["main"] = []
+                        
+                    # Ensure list structure
+                    while len(connections[previous_node_name]["main"]) <= 0:
+                        connections[previous_node_name]["main"].append([])
+                        
+                    connections[previous_node_name]["main"][0].append({
+                        "node": node_name,
+                        "type": "main",
+                        "index": 0
+                    })
+                
+                # Check for disabled nodes if we want to skip them? 
+                # For now, we connect through them or to them as they appear in the list.
+                
+                previous_node_name = node_name
+                
+            refactored["connections"] = connections
+            logger.info(f"Rebuilt connections for {len(nodes)} nodes.")
+
+        return refactored
 
     def _merge_set_nodes(self, steps: List[RecipeStep]) -> List[RecipeStep]:
         if not steps: return []

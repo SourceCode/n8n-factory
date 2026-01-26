@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "jsCode": "// Removes null, undefined, and empty string values from the object\nfunction clean(obj) {\n  for (var propName in obj) {\n    if (obj[propName] === null || obj[propName] === undefined || obj[propName] === '') {\n      delete obj[propName];\n    }\n  }\n  return obj;\n}\n\nreturn items.map(item => {\n  return { json: clean(item.json) };\n});"
+  },
+  "type": "n8n-nodes-base.code",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

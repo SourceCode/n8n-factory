@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "jsCode": "// Extract values from nested paths to top-level keys\n// Define paths as 'key:path.to.value'\nconst mappings = '{{ mappings | default('userId:user.id,city:address.city') }}'.split(',');\n\nreturn items.map(item => {\n  const newItem = {};\n  mappings.forEach(map => {\n    const [key, path] = map.split(':').map(s => s.trim());\n    const value = path.split('.').reduce((o, i) => (o ? o[i] : undefined), item.json);\n    newItem[key] = value;\n  });\n  return { json: newItem };\n});"
+  },
+  "type": "n8n-nodes-base.code",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

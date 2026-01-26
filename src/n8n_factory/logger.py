@@ -40,7 +40,8 @@ def setup_logger(level="INFO"):
         level=level,
         format="%(message)s",
         datefmt="[%X]",
-        handlers=[handler]
+        handlers=[handler],
+        force=True
     )
     return logging.getLogger("n8n_factory")
 

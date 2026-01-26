@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "jsCode": "// Flattens nested JSON objects\nfunction flatten(obj, prefix = '', res = {}) {\n  for (const key in obj) {\n    const val = obj[key];\n    const newKey = prefix ? `${prefix}.${key}` : key;\n    if (typeof val === 'object' && val !== null && !Array.isArray(val)) {\n      flatten(val, newKey, res);\n    } else {\n      res[newKey] = val;\n    }\n  }\n  return res;\n}\n\nreturn items.map(item => {\n  return { json: flatten(item.json) };\n});"
+  },
+  "type": "n8n-nodes-base.code",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

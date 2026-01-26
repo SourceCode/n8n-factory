@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "jsCode": "// Unflattens dot-notation keys into nested objects\nfunction unflatten(data) {\n  if (Object(data) !== data || Array.isArray(data)) return data;\n  const result = {};\n  for (const p in data) {\n    let cur = result, prop = '', parts = p.split('.');\n    for (let i = 0; i < parts.length; i++) {\n      const idx = !isNaN(parseInt(parts[i]));\n      cur = cur[prop] || (cur[prop] = (idx ? [] : {}));\n      prop = parts[i];\n    }\n    cur[prop] = data[p];\n  }\n  return result[''] || result;\n}\n\nreturn items.map(item => {\n  return { json: unflatten(item.json) };\n});"
+  },
+  "type": "n8n-nodes-base.code",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "jsCode": "// Pick specific keys from the JSON object\nconst keysToPick = '{{ keys | default('id,name') }}'.split(',').map(k => k.trim());\n\nreturn items.map(item => {\n  const newItem = {};\n  keysToPick.forEach(key => {\n    if (item.json.hasOwnProperty(key)) {\n      newItem[key] = item.json[key];\n    }\n  });\n  return { json: newItem };\n});"
+  },
+  "type": "n8n-nodes-base.code",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

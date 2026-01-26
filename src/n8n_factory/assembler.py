@@ -118,6 +118,7 @@ class WorkflowAssembler:
                 previous_node_name = node_name
 
         self.layout_engine.layout(nodes, connections)
+        self._auto_tag(recipe, nodes)
 
         workflow = {
             "name": recipe.name,
@@ -137,6 +138,23 @@ class WorkflowAssembler:
             workflow["meta"].update(recipe.meta)
         
         return workflow
+
+    def _auto_tag(self, recipe: Recipe, nodes: List[Dict]):
+        auto_tags = set()
+        for node in nodes:
+            typ = node.get("type", "").lower()
+            if "aws" in typ: auto_tags.add("aws")
+            if "postgres" in typ or "mysql" in typ or "mongo" in typ or "redis" in typ: 
+                auto_tags.add("database")
+            if "slack" in typ: auto_tags.add("slack")
+            if "discord" in typ: auto_tags.add("discord")
+            if "webhook" in typ: auto_tags.add("webhook")
+            if "cron" in typ or "schedule" in typ: auto_tags.add("scheduled")
+            if "email" in typ: auto_tags.add("email")
+            if "openai" in typ or "ollama" in typ or "langchain" in typ: auto_tags.add("ai")
+        
+        existing = set(recipe.tags)
+        recipe.tags = list(existing.union(auto_tags))
 
     def _add_connection(self, connections: Dict, source: str, target: str, type: str = "main", index: int = 0):
         if source not in connections:

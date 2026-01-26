@@ -1,31 +1,43 @@
 import os
 import glob
+import json
 from rich.console import Console
 
 console = Console()
 
-def clean_command():
-    console.print("[bold]Cleaning generated files...[/bold]")
-    
-    # Remove json files that look like workflows
-    # Be careful not to delete templates!
-    # Heuristic: delete .json files in root, or specific output folder.
-    # Safe approach: delete specific patterns or ask user.
-    # For this tool, we'll delete *.json in current dir EXCLUDING package.json or similar common ones if they exist.
+IGNORED_FILES = [
+    "package.json", 
+    "tsconfig.json", 
+    "recipe.schema.json",
+    "pyproject.toml" # Just in case glob logic changes
+]
+
+def clean_command(json_output: bool = False):
+    if not json_output:
+        console.print("[bold]Cleaning generated files...[/bold]")
     
     files = glob.glob("*.json")
-    deleted = 0
+    deleted_files = []
+    errors = []
+    
     for f in files:
-        if f in ["package.json", "tsconfig.json", "recipe.schema.json"]:
+        if f in IGNORED_FILES:
             continue
         try:
             os.remove(f)
-            console.print(f"[dim]Deleted {f}[/dim]")
-            deleted += 1
+            deleted_files.append(f)
+            if not json_output:
+                console.print(f"[dim]Deleted {f}[/dim]")
         except Exception as e:
-            console.print(f"[red]Failed to delete {f}: {e}[/red]")
+            errors.append(f"{f}: {str(e)}")
+            if not json_output:
+                console.print(f"[red]Failed to delete {f}: {e}[/red]")
             
-    # Clean pycache
-    # ... (skipping recursive pycache clean for safety/complexity in simple script)
-    
-    console.print(f"[green]Cleaned {deleted} files.[/green]")
+    if json_output:
+        print(json.dumps({
+            "deleted": deleted_files,
+            "errors": errors,
+            "count": len(deleted_files)
+        }, indent=2))
+    else:
+        console.print(f"[green]Cleaned {len(deleted_files)} files.[/green]")

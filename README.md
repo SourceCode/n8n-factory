@@ -10,13 +10,13 @@ Designed for AI agents and power users who need deterministic workflow generatio
 ## Features
 
 - **🏭 Assembly:** Compile YAML `recipes` into valid n8n `workflow.json` files.
-- **🧩 Templates:** Massive library (80+) of reusable node templates including AI (Ollama, Pinecone), DevOps (AWS, GitHub), and SaaS (Slack, HubSpot).
-- **🔍 Validation:** Detects circular imports, orphan nodes, unused variables, and potential secrets.
-- **🚀 Optimization:** Automatically merges `set` nodes, prunes dead code, and folds constants.
-- **🎮 Simulation:** Dry-run workflows locally with mock data, latency simulation, breakpoints, and assertions.
-- **🕸️ Auto-Layout:** Automatically positions nodes in the n8n canvas.
+- **🧩 Templates:** Massive library (80+) of reusable node templates.
+- **🔍 Validation:** Detects circular imports, orphan nodes, and potential secrets.
+- **🚀 Optimization:** Automatically merges nodes, prunes dead code, and standardizes JSON structure.
+- **🛡️ Hardening:** Inject error triggers and debug logging automatically.
+- **🎮 Simulation:** Dry-run workflows locally with mock data.
+- **⚙️ Operations:** Manage Docker, Postgres, and Redis directly via CLI.
 - **📦 Bundle & Publish:** Export to ZIP or upload directly to your n8n instance API.
-- **🔧 Developer Tools:** Linting, diffing, visualization (Mermaid/ASCII), and extensive CLI.
 
 ## Installation
 
@@ -24,56 +24,22 @@ Designed for AI agents and power users who need deterministic workflow generatio
 pip install n8n-factory
 ```
 
-Or from source:
-
-```bash
-git clone https://github.com/username/n8n-factory.git
-cd n8n-factory
-pip install -e .
-```
-
 ## Quick Start
 
-1.  **Initialize a new recipe:**
-    ```bash
-    n8n-factory init
-    ```
-
-2.  **Edit `recipes/my_workflow.yaml`:**
-    ```yaml
-    name: "My First Workflow"
-    steps:
-      - id: "start"
-        template: "webhook"
-        params: { path: "hello", method: "GET" }
-      - id: "ai"
-        template: "ollama_chat"
-        params: { prompt: "Hello world" }
-    ```
-
-3.  **Build it:**
-    ```bash
-    n8n-factory build recipes/my_workflow.yaml
-    ```
-
-4.  **Visualize logic:**
-    ```bash
-    n8n-factory visualize recipes/my_workflow.yaml
-    ```
+1.  **Initialize:** `n8n-factory init`
+2.  **Create Recipe:** Edit `recipes/my_workflow.yaml`.
+3.  **Build:** `n8n-factory build recipes/my_workflow.yaml`
 
 ## CLI Reference
 
 - `build`: Assemble recipe to JSON.
-- `simulate`: Run logic locally (supports `--interactive`, `--step`).
-- `publish` / `run`: Upload to n8n (supports `--activate`).
-- `list`: Show available templates.
-- `search`: Find templates.
-- `inspect`: View template details.
-- `lint`: Check style/errors.
-- `diff`: Compare recipe vs JSON or another recipe.
-- `serve`: Host visualization locally.
-- `watch`: Auto-rebuild on change.
-- `template new`: Scaffold a new template.
+- `list`: Show available templates (`--json`).
+- `ops`: Runtime operations (`logs`, `db`, `redis`, `exec`).
+- `normalize`: Standardize JSON structure.
+- `optimize`: Refactor and clean up workflows.
+- `harden`: Inject debug logging and error handling.
+- `simulate`: Run logic locally.
+- `diff`: Compare recipe vs JSON.
 
 See `n8n-factory --help` for all commands.
 
@@ -84,15 +50,13 @@ graph TD;
     Recipe[recipe.yaml] --> Assembler;
     Templates[JSON Templates] --> Assembler;
     Assembler --> Optimizer;
-    Optimizer --> LayoutEngine;
-    LayoutEngine --> JSON[n8n Workflow JSON];
-    Recipe --> Simulator;
-    Simulator --> Report[HTML/CSV/JSON];
+    Optimizer --> JSON[n8n Workflow JSON];
+    Ops[CLI Ops] --> Docker[Docker/DB];
 ```
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for details on setting up the dev environment and running tests.
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 

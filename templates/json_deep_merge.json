@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "jsCode": "// Deep merges properties from 'data' into 'target'\n// Expects input to have 'target' and 'data' keys or adjusts validation\n\nfunction deepMerge(target, source) {\n  for (const key of Object.keys(source)) {\n    if (source[key] instanceof Object && key in target) {\n      Object.assign(source[key], deepMerge(target[key], source[key]));\n    }\n  }\n  Object.assign(target || {}, source);\n  return target;\n}\n\nconst results = [];\nfor (const item of items) {\n  const target = item.json.target || {};\n  const source = item.json.source || {};\n  results.push({ json: deepMerge(target, source) });\n}\n\nreturn results;"
+  },
+  "type": "n8n-nodes-base.code",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

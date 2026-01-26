@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "jsCode": "// Omit specific keys from the JSON object\nconst keysToOmit = '{{ keys | default('password,secret') }}'.split(',').map(k => k.trim());\n\nreturn items.map(item => {\n  const newItem = { ...item.json };\n  keysToOmit.forEach(key => {\n    delete newItem[key];\n  });\n  return { json: newItem };\n});"
+  },
+  "type": "n8n-nodes-base.code",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

@@ -52,7 +52,17 @@
 | `item_lists` | `n8n-nodes-base.itemLists` | Active |  |
 | `jenkins` | `n8n-nodes-base.jenkins` | Active |  |
 | `jira` | `n8n-nodes-base.jira` | Active |  |
+| `json_array_unique` | `n8n-nodes-base.code` | Active |  |
+| `json_clean` | `n8n-nodes-base.code` | Active |  |
+| `json_deep_merge` | `n8n-nodes-base.code` | Active |  |
+| `json_diff` | `n8n-nodes-base.code` | Active |  |
+| `json_extract_paths` | `n8n-nodes-base.code` | Active |  |
+| `json_flatten` | `n8n-nodes-base.code` | Active |  |
+| `json_omit` | `n8n-nodes-base.code` | Active |  |
 | `json_parser_ai` | `n8n-nodes-base.code` | Active |  |
+| `json_pick` | `n8n-nodes-base.code` | Active |  |
+| `json_unflatten` | `n8n-nodes-base.code` | Active |  |
+| `json_validate_schema` | `n8n-nodes-base.code` | Active |  |
 | `kafka` | `n8n-nodes-base.kafka` | Active |  |
 | `lambda` | `n8n-nodes-base.awsLambda` | Active |  |
 | `langchain_agent` | `n8n-nodes-base.httpRequest` | Active |  |

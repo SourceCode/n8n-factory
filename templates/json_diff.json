@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "jsCode": "// Computes the difference between 'old' and 'new' objects in input\nconst results = [];\n\nfunction getDiff(o1, o2) {\n  return Object.keys(o2).reduce((diff, key) => {\n    if (o1[key] === o2[key]) return diff;\n    return {\n      ...diff,\n      [key]: o2[key]\n    };\n  }, {});\n}\n\nfor (const item of items) {\n  const oldObj = item.json.old || {};\n  const newObj = item.json.new || {};\n  results.push({ json: getDiff(oldObj, newObj) });\n}\n\nreturn results;"
+  },
+  "type": "n8n-nodes-base.code",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

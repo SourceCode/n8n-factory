@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "jsCode": "// Validates that the input item contains required fields\nconst requiredFields = [\'{{ fields | default('id,name') \'}.split(',')];\nconst missing = [];\n\nfor (const field of requiredFields) {\n  if (!items[0].json.hasOwnProperty(field.trim())) {\n    missing.push(field.trim());\n  }\n}\n\nif (missing.length > 0) {\n  throw new Error(`Missing required fields: ${missing.join(', ')}`);\n}\n\nreturn items;"
+  },
+  "type": "n8n-nodes-base.code",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

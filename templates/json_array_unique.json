@@ -1,0 +1,8 @@
+{
+  "parameters": {
+    "jsCode": "// Deduplicate an array of objects based on a unique key\n// Assumes input item contains an array field named 'data'\nconst uniqueKey = '{{ uniqueKey | default('id') }}';\n\nreturn items.map(item => {\n  const array = item.json.data || [];\n  if (!Array.isArray(array)) return item;\n  \n  const seen = new Set();\n  const uniqueArray = array.filter(el => {\n    const val = el[uniqueKey];\n    if (seen.has(val)) return false;\n    seen.add(val);\n    return true;\n  });\n  \n  return { json: { ...item.json, data: uniqueArray } };\n});"
+  },
+  "type": "n8n-nodes-base.code",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

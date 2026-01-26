@@ -1,0 +1,9 @@
+{
+  "parameters": {},
+  "type": "n8n-nodes-base.errorTrigger",
+  "typeVersion": 1,
+  "position": [
+    0,
+    0
+  ]
+}
