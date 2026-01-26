@@ -26,6 +26,7 @@
 | `edit_image` | `n8n-nodes-base.editImage` | Active |  |
 | `elasticsearch` | `n8n-nodes-base.elasticsearch` | Active |  |
 | `email_send` | `n8n-nodes-base.emailSend` | Active |  |
+| `error_trigger` | `n8n-nodes-base.errorTrigger` | Active |  |
 | `execute_command` | `n8n-nodes-base.executeCommand` | Active |  |
 | `execute_workflow` | `n8n-nodes-base.executeWorkflow` | Active |  |
 | `facebook` | `n8n-nodes-base.facebookGraphApi` | Active |  |
@@ -105,6 +106,7 @@
 | `quickbooks` | `n8n-nodes-base.quickBooks` | Active |  |
 | `rabbitmq` | `n8n-nodes-base.rabbitmq` | Active |  |
 | `rag_context_merge` | `n8n-nodes-base.merge` | Active |  |
+| `raw` | `{{ type }}` | Active |  |
 | `read_binary_file` | `n8n-nodes-base.readBinaryFile` | Active |  |
 | `read_pdf` | `n8n-nodes-base.readPdf` | Active |  |
 | `recursive_character_splitter` | `n8n-nodes-base.code` | Active |  |

@@ -31,6 +31,7 @@ from .commands.search import search_templates
 from .commands.profile import profile_command
 from .commands.lint import lint_recipe
 from .commands.template_new import template_new_command
+from .commands.template_extract import template_extract_command
 from .commands.info import info_command
 from .commands.export import export_command
 from .commands.serve import serve_command
@@ -43,6 +44,7 @@ from .commands.audit import audit_command
 from .commands.mock import mock_generate_command
 from .commands.config import config_command
 from .commands.import_workflow import import_command
+from .commands.policy import policy_check_command
 from .commands.doc import doc_command
 from .commands.security import security_command
 from .commands.health import health_command
@@ -542,13 +544,21 @@ def main():
         elif args.command == "watch": watch_recipe(args.recipe, args.templates)
         elif args.command == "inspect": inspect_template(args.template, args.templates, json_output=args.json)
         elif args.command == "diff": diff_recipe(args.recipe, args.target, args.templates, html_output=args.html, summary=args.summary, json_output=args.json)
-            elif args.command == "import": import_command(args.file, args.output, args.json)
-                elif args.command == "cost": cost_command(args.recipe, json_output=args.json)
-                elif args.command == "mock": mock_generate_command(args.recipe, args.output, json_output=args.json)
-                elif args.command == "audit": audit_command(args.recipe, json_output=args.json)            elif args.command == "validate":
-                recipe = load_recipe(args.recipe, env_name=args.env)
-                validate_recipe(recipe, args.templates, check_env=args.check_env, check_js=args.js, json_output=args.json)
-            elif args.command == "lint":            recipe = load_recipe(args.recipe)
+
+        elif args.command == "import": import_command(args.file, args.output, args.json)
+
+        elif args.command == "cost": cost_command(args.recipe, json_output=args.json)
+
+        elif args.command == "mock": mock_generate_command(args.recipe, args.output, json_output=args.json)
+
+        elif args.command == "audit": audit_command(args.recipe, json_output=args.json)
+
+        elif args.command == "validate":
+            recipe = load_recipe(args.recipe, env_name=args.env)
+            validate_recipe(recipe, args.templates, check_env=args.check_env, check_js=args.js, json_output=args.json)
+
+        elif args.command == "lint":
+            recipe = load_recipe(args.recipe)
             lint_recipe(recipe, args.templates, strict=args.strict, json_output=args.json)
         elif args.command == "login": login_command()
         elif args.command == "profile": profile_command(args.name)
@@ -558,11 +568,17 @@ def main():
         elif args.command == "doctor": doctor_command()
         elif args.command == "clean": clean_command(json_output=args.json)
         elif args.command == "config": config_command(json_output=args.json)
-            elif args.command == "doc": 
-                recipe = load_recipe(args.recipe)
-                doc_command(recipe, json_output=args.json, prompt_mode=args.prompt)
-            elif args.command == "tree":            recipe = load_recipe(args.recipe)
+
+        elif args.command == "doc": 
+            recipe = load_recipe(args.recipe)
+            doc_command(recipe, json_output=args.json, prompt_mode=args.prompt)
+
+        elif args.command == "tree":
+            recipe = load_recipe(args.recipe)
             tree_command(recipe)
+
+        elif args.command == "serve": serve_command(args.recipe, port=args.port)
+
         elif args.command == "benchmark": benchmark_command(args.size)
         elif args.command == "bundle": bundle_command(args.recipe, args.output)
         elif args.command == "examples": examples_command(args.action, args.name)

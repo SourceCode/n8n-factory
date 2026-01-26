@@ -27,7 +27,7 @@ def visualize_recipe(recipe: Recipe, format: str = "mermaid"):
                 edges.append({"source": s, "target": step.id, "type": "flow"})
         
         # 2. Expression Edges
-        pattern = re.compile(r'\$node[["\'](.*?)["\']]')
+        pattern = re.compile(r'\$node\[["\'](.*?)["\']\]')
         for step in recipe.steps:
             for v in step.params.values():
                 matches = pattern.findall(str(v))

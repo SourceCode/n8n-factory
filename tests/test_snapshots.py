@@ -1,5 +1,6 @@
 import json
 import pytest
+import os
 from n8n_factory.assembler import WorkflowAssembler
 from n8n_factory.models import Recipe, RecipeStep
 
@@ -7,7 +8,11 @@ def test_template_snapshots(temp_templates_dir):
     """
     Verifies that core templates generate expected JSON structure.
     """
-    assembler = WorkflowAssembler(templates_dir="templates")
+    # Use real templates directory relative to project root
+    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    templates_dir = os.path.join(root_dir, "templates")
+    
+    assembler = WorkflowAssembler(templates_dir=templates_dir)
     
     # Snapshot 1: Webhook
     steps = [RecipeStep(id="hook", template="webhook", params={"path": "test", "method": "GET", "uuid": "u1"})]

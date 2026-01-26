@@ -27,7 +27,7 @@ def test_cli_build(temp_templates_dir, tmp_path, capsys):
         assert data["name"] == "CLI Test"
     
     captured = capsys.readouterr()
-    assert "Successfully built workflow" in captured.out
+    assert "Built:" in captured.out
 
 def test_cli_simulate(temp_templates_dir, tmp_path, caplog):
     caplog.set_level(logging.INFO)

@@ -34,7 +34,7 @@ def generate_docs(templates_dir="templates"):
         # Improvement #16: Enhanced Docs
         status = []
         if meta_info.get("deprecated"):
-            status.append("⚠️ Deprecated")
+            status.append("[Deprecated]")
         
         required = meta_info.get("required_params", [])
         
