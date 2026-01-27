@@ -9,16 +9,17 @@ from .logger import logger
 console = Console()
 
 class Scheduler:
-    def __init__(self, concurrency: int = 5, poll_interval: int = 5):
+    def __init__(self, concurrency: int = 5, poll_interval: int = 5, broker_port: Optional[int] = None):
         self.concurrency = concurrency
         self.poll_interval = poll_interval
+        self.broker_port = broker_port
         self.operator = SystemOperator()
         self.queue = QueueManager(operator=self.operator)
         self.running = False
 
     def start(self):
+        console.print(f"[bold green]Starting Scheduler (Concurrency: {self.concurrency}, Broker Port: {self.broker_port or 'Default'})[/bold green]")
         self.running = True
-        console.print(f"[bold green]Starting Scheduler (Concurrency: {self.concurrency})[/bold green]")
         
         while self.running:
             try:
@@ -66,28 +67,23 @@ class Scheduler:
         
         console.print(f"[blue]Starting job:[/blue] {workflow}")
         
-        # Note: 'execute_workflow' in operator currently just runs it. 
-        # Passing inputs/data via CLI is tricky with n8n execute.
-        # CLI supports `--file` for workflow input, but for DATA input?
-        # n8n execute does not easily support passing execution data/variables via CLI args.
-        # It typically runs the workflow. 
-        # If the workflow needs input, it usually comes from a Trigger or we must use webhook trigger.
-        
-        # If mode is 'id', we use `n8n execute --id <id>`
-        # If the user wants to pass data, we might need `trigger_webhook` if it's a webhook workflow?
-        # But `queue` implies we are driving it.
-        
-        # Limit: The current SystemOperator.execute_workflow only does --id or --file.
-        # It doesn't support injecting custom data.
-        # We will proceed with basic execution. 
-        
         try:
+            # We enforce a safe port for CLI execution to avoid conflicts with the main instance
+            safe_env = {"N8N_PORT": "5679"}
+            
+            res = ""
             if mode == 'id':
-                res = self.operator.execute_workflow(workflow_id=workflow)
+                res = self.operator.execute_workflow(workflow_id=workflow, env=safe_env, broker_port=self.broker_port)
             else:
-                res = self.operator.execute_workflow(file_path=workflow)
-                
+                res = self.operator.execute_workflow(file_path=workflow, env=safe_env, broker_port=self.broker_port)
+            
+            # Check for failure string from operator
+            if res.startswith("Execution failed"):
+                raise RuntimeError(res)
+
             logger.info(f"Execution started/result: {res}")
             
         except Exception as e:
             logger.error(f"Failed to execute job {workflow}: {e}")
+            logger.warning(f"Requeueing job {workflow} due to failure.")
+            self.queue.requeue(job)

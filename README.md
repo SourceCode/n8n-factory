@@ -91,9 +91,15 @@ n8n-factory ops monitor <EXECUTION_ID>
 ```
 
 ### Job Queue & Worker
-Queue workflows for execution and let the worker manage concurrency.
+Queue workflows for execution and let the worker manage concurrency. The worker is robust, automatically requeueing failed jobs.
 
-**Start the Worker:**
+**Run the Queue Consumer (Recommended):**
+```bash
+# Run with concurrency 5, poll every 5s, optional broker port override
+n8n-factory queue run --concurrency 5 --poll 5 --broker-port 6580
+```
+
+**Legacy Worker Start:**
 ```bash
 n8n-factory worker start --concurrency 5
 ```
@@ -105,9 +111,22 @@ n8n-factory queue add my_workflow_id --mode id
 
 **Manage Queue:**
 ```bash
-n8n-factory queue list
+n8n-factory queue list --limit 20
 n8n-factory queue clear
 ```
+
+## Configuration
+
+### Environment Variables
+You can configure the behavior of `n8n-factory` using environment variables or a `.env` file.
+
+| Variable | Description | Default |
+| :--- | :--- | :--- |
+| `N8N_CONTAINER_NAME` | Name of the n8n Docker container | `n8n` |
+| `DB_CONTAINER_NAME` | Name of the Postgres container | `postgres` |
+| `REDIS_CONTAINER_NAME`| Name of the Redis container | `n8n-redis` |
+| `REDIS_PASSWORD` | Password for Redis authentication | `None` |
+| `N8N_RUNNERS_BROKER_PORT` | Broker port for n8n runners | `None` |
 
 ## Docker Environment
 

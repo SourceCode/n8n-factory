@@ -6,10 +6,12 @@ from typing import List, Dict, Any, Optional, Union
 logger = logging.getLogger("n8n_factory")
 
 class SystemOperator:
-    def __init__(self, n8n_container: str = "n8n", db_container: str = "postgres", redis_container: str = "redis"):
-        self.n8n_container = n8n_container
-        self.db_container = db_container
-        self.redis_container = redis_container
+    def __init__(self, n8n_container: Optional[str] = None, db_container: Optional[str] = None, redis_container: Optional[str] = None):
+        import os
+        self.n8n_container = n8n_container or os.getenv("N8N_CONTAINER_NAME", "n8n")
+        self.db_container = db_container or os.getenv("DB_CONTAINER_NAME", "postgres")
+        # Default changed to n8n-redis as per requirements, adjustable via env or init arg
+        self.redis_container = redis_container or os.getenv("REDIS_CONTAINER_NAME", "n8n-redis")
 
     def _run_cmd(self, cmd: List[str]) -> str:
         try:
@@ -67,20 +69,37 @@ class SystemOperator:
         Runs a redis-cli command.
         Accepts a string (space-separated) or a list of arguments (safer for data).
         """
+        import os
         redis_args = command.split() if isinstance(command, str) else command
-        cmd = ["docker", "exec", self.redis_container, "redis-cli"] + redis_args
+        
+        # Inject Auth if present
+        redis_password = os.getenv("REDIS_PASSWORD")
+        auth_args = ["-a", redis_password] if redis_password else []
+        
+        cmd = ["docker", "exec", self.redis_container, "redis-cli"] + auth_args + redis_args
         try:
             return self._run_cmd(cmd)
         except RuntimeError as e:
              return f"Redis command failed: {e}"
 
-    def execute_workflow(self, workflow_id: Optional[str] = None, file_path: Optional[str] = None) -> str:
+    def execute_workflow(self, workflow_id: Optional[str] = None, file_path: Optional[str] = None, env: Dict[str, str] = {}, broker_port: Optional[int] = None) -> str:
         """
         Executes an n8n workflow.
         """
+        import os
+        env_args = []
+        
+        # Merge broker port into env if provided or found in system env
+        target_broker_port = broker_port or os.getenv("N8N_RUNNERS_BROKER_PORT")
+        if target_broker_port:
+            env["N8N_RUNNERS_BROKER_PORT"] = str(target_broker_port)
+
+        for k, v in env.items():
+            env_args.extend(["-e", f"{k}={v}"])
+
         if workflow_id:
              # Execute by ID in container
-             cmd = ["docker", "exec", "-u", "node", self.n8n_container, "n8n", "execute", "--id", workflow_id]
+             cmd = ["docker", "exec"] + env_args + ["-u", "node", self.n8n_container, "n8n", "execute", "--id", workflow_id]
         elif file_path:
              # Execute by file. 
              # Challenge: File needs to be IN the container.
@@ -93,7 +112,7 @@ class SystemOperator:
              cp_cmd = ["docker", "cp", file_path, f"{self.n8n_container}:{container_tmp}"]
              self._run_cmd(cp_cmd)
              
-             cmd = ["docker", "exec", "-u", "node", self.n8n_container, "n8n", "execute", "--file", container_tmp]
+             cmd = ["docker", "exec"] + env_args + ["-u", "node", self.n8n_container, "n8n", "execute", "--file", container_tmp]
         else:
             raise ValueError("Must provide workflow_id or file_path")
 

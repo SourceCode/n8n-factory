@@ -26,6 +26,15 @@ class QueueManager:
         logger.info(f"Enqueued job for workflow '{workflow}'. Queue depth: {res}")
         return res
 
+    def requeue(self, job: Dict[str, Any]):
+        """
+        Pushes a job back onto the queue (e.g. after failure).
+        """
+        payload = json.dumps(job)
+        res = self.operator.inspect_redis(["LPUSH", self.QUEUE_KEY, payload])
+        logger.warning(f"Requeued job for workflow '{job.get('workflow')}'. Queue depth: {res}")
+        return res
+
     def dequeue(self) -> Optional[Dict[str, Any]]:
         """
         Removes and returns the next job from the queue.

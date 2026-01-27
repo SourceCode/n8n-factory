@@ -46,7 +46,11 @@ class TestScheduler(unittest.TestCase):
         scheduler._tick()
         
         # Assert
-        mock_op.execute_workflow.assert_called_with(workflow_id="wf1")
+        mock_op.execute_workflow.assert_called_with(
+            workflow_id="wf1",
+            env={"N8N_PORT": "5679"},
+            broker_port=None
+        )
         mock_queue.dequeue.assert_called()
 
     @patch('n8n_factory.scheduler.SystemOperator')

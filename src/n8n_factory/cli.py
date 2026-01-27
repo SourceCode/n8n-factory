@@ -14,6 +14,9 @@ from .optimizer import WorkflowOptimizer
 from .normalizer import WorkflowNormalizer
 from .hardener import WorkflowHardener
 from .operator import SystemOperator
+from .workspace.manager import WorkspaceManager
+from .loops.sdd import SDDLoop
+from .loops.kanban import KanbanLoop
 from .commands.list_templates import list_templates
 from .commands.init import init_recipe
 from .commands.visualize import visualize_recipe
@@ -54,7 +57,7 @@ from .logger import logger, setup_logger
 from .utils import load_recipe
 from .commands.ai import ask_command, list_models_command, optimize_prompt_command
 from .commands.ops import ops_monitor_command
-from .commands.schedule import schedule_worker_command, schedule_add_command, schedule_list_command, schedule_clear_command
+from .commands.schedule import schedule_worker_command, schedule_add_command, schedule_list_command, schedule_clear_command, schedule_run_command
 
 console = Console()
 
@@ -156,6 +159,11 @@ def main():
     q_add = queue_subs.add_parser("add")
     q_add.add_argument("workflow"); q_add.add_argument("--mode", default="id", choices=["id", "file"]); q_add.add_argument("--data", default="{}")
     
+    q_run = queue_subs.add_parser("run")
+    q_run.add_argument("--concurrency", "-c", type=int, default=5)
+    q_run.add_argument("--poll", "-p", type=int, default=5)
+    q_run.add_argument("--broker-port", type=int, help="Override broker port")
+
     q_list = queue_subs.add_parser("list")
     q_list.add_argument("--limit", type=int, default=20); q_list.add_argument("--json", action="store_true")
     
@@ -357,10 +365,31 @@ def main():
     ai_list = ai_subs.add_parser("list")
     ai_list.add_argument("--json", action="store_true")
 
+    ai_models = ai_subs.add_parser("models")
+    ai_models.add_argument("--json", action="store_true")
+
     ai_opt = ai_subs.add_parser("optimize")
     ai_opt.add_argument("prompt")
     ai_opt.add_argument("--model", "-m")
     ai_opt.add_argument("--json", action="store_true")
+
+    # Loop
+    loop_p = subparsers.add_parser("loop")
+    loop_subs = loop_p.add_subparsers(dest="loop_command")
+    
+    loop_init = loop_subs.add_parser("init")
+    
+    loop_run = loop_subs.add_parser("run")
+    loop_run.add_argument("--type", choices=["sdd", "kanban"], default="sdd")
+    loop_run.add_argument("--goal")
+    loop_run.add_argument("--model")
+    loop_run.add_argument("--max-iterations", type=int, default=25)
+    loop_run.add_argument("--approve", action="store_true")
+    loop_run.add_argument("--resume", action="store_true")
+
+    loop_status = loop_subs.add_parser("status")
+    loop_reset = loop_subs.add_parser("reset")
+    loop_reset.add_argument("--yes", action="store_true")
 
     # Schema
     subparsers.add_parser("schema")
@@ -372,7 +401,57 @@ def main():
             setup_logger(level="DEBUG")
             logger.debug("Debug logging enabled")
 
-        if args.command == "build":
+        if args.command == "loop":
+            workspace = WorkspaceManager()
+            
+            if args.loop_command == "init":
+                workspace.init_workspace()
+                workspace.ensure_sdd_files()
+                workspace.ensure_kanban_file()
+                console.print("[green]Loop workspace initialized in .n8n-factory/[/green]")
+            
+            elif args.loop_command == "run":
+                config = workspace.load_config()
+                if args.model:
+                    config["model"] = args.model
+                
+                loop = None
+                if args.type == "sdd":
+                    loop = SDDLoop(workspace, config, goal=args.goal, resume=args.resume)
+                elif args.type == "kanban":
+                    loop = KanbanLoop(workspace, config, goal=args.goal, resume=args.resume)
+                
+                if loop:
+                    loop.run(max_iterations=args.max_iterations, approve=args.approve)
+
+            elif args.loop_command == "status":
+                if os.path.exists(".n8n-factory/state.json"):
+                    with open(".n8n-factory/state.json") as f:
+                        print(f.read())
+                else:
+                    console.print("[yellow]No active loop state found.[/yellow]")
+
+            elif args.loop_command == "reset":
+                if args.yes:
+                    import shutil
+                    if os.path.exists(".n8n-factory"):
+                        shutil.rmtree(".n8n-factory")
+                        console.print("[green]Workspace reset.[/green]")
+                else:
+                    console.print("[yellow]Use --yes to confirm reset.[/yellow]")
+
+        elif args.command == "ai":
+            if args.ai_command == "chat":
+                ask_command(args.prompt, model=args.model, system=args.system, json_output=args.json)
+            elif args.ai_command == "list" or args.ai_command == "models":
+                list_models_command(json_output=args.json)
+            elif args.ai_command == "optimize":
+                optimize_prompt_command(args.prompt, model=args.model, json_output=args.json)
+            else:
+                console.print("Use: ai chat <prompt> | list | models | optimize <prompt>")
+
+        elif args.command == "build":
+            # ... existing build logic ...
             start_time = time.time()
             recipes_to_build = []
             if os.path.isdir(args.recipe):
@@ -444,6 +523,17 @@ def main():
                     sys.exit(1)
             elif not args.json:
                 console.print(f"[dim]Finished in {elapsed:.2f}s[/dim]")
+
+        # ... (rest of command mappings, simulate, publish, etc. - no changes needed below this point unless specific updates) ...
+        # I need to ensure I didn't cut off the rest of the file logic.
+        # The 'simulate', 'publish', 'run', 'optimize' etc blocks are all separate if/elif blocks.
+        # I inserted the 'loop' block before 'ai' or around it.
+        # The provided 'new_string' has `if args.command == "loop":` and then `elif args.command == "ai":`.
+        # I should just verify the `elif` chain continues correctly for `build`, `simulate` etc.
+        
+        # My write_file call replaces the whole file. I need to include ALL the existing elif blocks.
+        # The file I read had `elif args.command == "simulate":` etc.
+        # I will include them.
 
         elif args.command == "simulate":
             recipe = load_recipe(args.recipe, env_name=args.env)
@@ -590,6 +680,8 @@ def main():
         elif args.command == "queue":
             if args.queue_command == "add":
                 schedule_add_command(args.workflow, args.mode, args.data)
+            elif args.queue_command == "run":
+                schedule_run_command(concurrency=args.concurrency, poll=args.poll, broker_port=args.broker_port)
             elif args.queue_command == "list":
                 schedule_list_command(args.limit, args.json)
             elif args.queue_command == "clear":
@@ -695,12 +787,12 @@ def main():
         elif args.command == "ai":
             if args.ai_command == "chat":
                 ask_command(args.prompt, model=args.model, system=args.system, json_output=args.json)
-            elif args.ai_command == "list":
+            elif args.ai_command == "list" or args.ai_command == "models":
                 list_models_command(json_output=args.json)
             elif args.ai_command == "optimize":
                 optimize_prompt_command(args.prompt, model=args.model, json_output=args.json)
             else:
-                console.print("Use: ai chat <prompt> | list | optimize <prompt>")
+                console.print("Use: ai chat <prompt> | list | models | optimize <prompt>")
 
         elif args.command == "schema":
              print(json.dumps(Recipe.model_json_schema(), indent=2))

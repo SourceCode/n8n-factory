@@ -1,7 +1,6 @@
 import json
 import sys
 from rich.console import Console
-from rich.markdown import Markdown
 from ..ai.ollama_client import OllamaClient
 from ..ai.prompt_optimizer import PromptOptimizer
 
@@ -34,7 +33,7 @@ def ask_command(prompt: str, model: str = None, system: str = None, json_output:
     """
     Send a chat prompt to Ollama.
     """
-    client = OllamaClient(model=model)
+    client = OllamaClient(model=model or "qwen3:8b")
     
     messages = []
     if system:
@@ -46,24 +45,13 @@ def ask_command(prompt: str, model: str = None, system: str = None, json_output:
         console.print("[dim]Thinking...[/dim]")
 
     try:
-        # We use stream=True for better UX in CLI unless json_output is requested
         if json_output:
             response = client.chat(messages, stream=False)
             print(json.dumps(response, indent=2))
         else:
-            response_stream = client.chat(messages, stream=True)
-            full_response = ""
-            for line in response_stream.iter_lines():
-                if line:
-                    try:
-                        chunk = json.loads(line)
-                        if "message" in chunk and "content" in chunk["message"]:
-                            content = chunk["message"]["content"]
-                            full_response += content
-                            console.print(content, end="")
-                    except json.JSONDecodeError:
-                        pass
-            console.print() # Newline at end
+            # Basic non-streaming fallback for now until client supports streaming
+            response = client.chat(messages, stream=False)
+            console.print(response.get("content", ""))
             
     except Exception as e:
         if json_output:
@@ -80,8 +68,9 @@ def list_models_command(json_output: bool = False):
             print(json.dumps(models, indent=2))
         else:
             console.print("[bold]Available Models:[/bold]")
-            for m in models.get("models", []):
-                console.print(f"- {m['name']} ({m['size'] / 1024 / 1024 / 1024:.2f} GB)")
+            for m in models:
+                size_gb = m.get('size', 0) / 1024 / 1024 / 1024
+                console.print(f"- {m['name']} ({size_gb:.2f} GB)")
     except Exception as e:
         if json_output:
             print(json.dumps({"error": str(e)}))
