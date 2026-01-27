@@ -1,9 +1,11 @@
 import time
 import json
+import os
 from typing import Optional
 from rich.console import Console
 from .operator import SystemOperator
 from .queue_manager import QueueManager
+from .control_plane import AdaptiveBatchSizer, PhaseGate
 from .logger import logger
 
 console = Console()
@@ -15,7 +17,13 @@ class Scheduler:
         self.broker_port = broker_port
         self.operator = SystemOperator()
         self.queue = QueueManager(operator=self.operator)
+        self.sizer = AdaptiveBatchSizer(self.operator)
+        self.gate = PhaseGate(self.operator)
         self.running = False
+        
+        # Ensure log directory exists
+        os.makedirs("logs", exist_ok=True)
+        self.job_log_file = "logs/jobs.jsonl"
 
     def start(self):
         console.print(f"[bold green]Starting Scheduler (Concurrency: {self.concurrency}, Broker Port: {self.broker_port or 'Default'})[/bold green]")
@@ -43,10 +51,13 @@ class Scheduler:
         if slots_available > 0:
             # 3. Check queue
             queue_size = self.queue.size()
-            if queue_size > 0:
-                logger.info(f"Slots available: {slots_available}. Queue size: {queue_size}")
+            delayed_size = self.queue.delayed_size()
+            
+            if queue_size > 0 or delayed_size > 0:
+                logger.info(f"Slots available: {slots_available}. Queue size: {queue_size} (Delayed: {delayed_size})")
                 
                 # Dequeue and run up to slots_available
+                # Note: dequeue checks delayed queue automatically
                 for _ in range(slots_available):
                     job = self.queue.dequeue()
                     if not job:
@@ -62,14 +73,36 @@ class Scheduler:
     def _execute_job(self, job: dict):
         workflow = job.get("workflow")
         mode = job.get("mode")
+        meta = job.get("meta", {})
         # Ensure default is empty dict, using single braces
         inputs = job.get("inputs", dict())
         
-        console.print(f"[blue]Starting job:[/blue] {workflow}")
+        # --- Phase Gating Check ---
+        phase = meta.get("phase")
+        run_id = meta.get("run_id", "default")
+        
+        if phase:
+            # Check if we can run this phase
+            if not self.gate.can_run(run_id, str(phase)):
+                logger.info(f"Phase {phase} gated for run {run_id}. Requeueing with delay.")
+                self.queue.requeue(job, delay=10000) # Check again in 10s
+                return
+
+        # --- Adaptive Batch Sizing ---
+        batch_size = self.sizer.get_batch_size()
+        
+        console.print(f"[blue]Starting job:[/blue] {workflow} [dim](Batch: {batch_size})[/dim]")
+        start_time = time.time()
+        status = "unknown"
+        error_msg = None
         
         try:
             # We enforce a safe port for CLI execution to avoid conflicts with the main instance
-            safe_env = {"N8N_PORT": "5679"}
+            safe_env = {
+                "N8N_PORT": "5679",
+                "BATCH_SIZE": str(batch_size),
+                "N8N_BATCH_SIZE": str(batch_size)
+            }
             
             res = ""
             if mode == 'id':
@@ -82,8 +115,44 @@ class Scheduler:
                 raise RuntimeError(res)
 
             logger.info(f"Execution started/result: {res}")
+            status = "success"
             
         except Exception as e:
+            status = "failed"
+            error_msg = str(e)
             logger.error(f"Failed to execute job {workflow}: {e}")
-            logger.warning(f"Requeueing job {workflow} due to failure.")
-            self.queue.requeue(job)
+            
+            # Backoff Retry Logic
+            retries = job.get("retries", 0)
+            max_retries = 5
+            if retries < max_retries:
+                job["retries"] = retries + 1
+                # Exponential backoff: 2s, 4s, 8s, 16s, 32s
+                delay = 2000 * (2 ** retries) 
+                logger.warning(f"Requeueing job {workflow} (Retry {job['retries']}/{max_retries}) in {delay}ms.")
+                self.queue.requeue(job, delay=delay)
+            else:
+                logger.error(f"Job {workflow} failed max retries. Dropping.")
+
+        finally:
+            # --- Update Stats ---
+            duration_ms = (time.time() - start_time) * 1000
+            self.sizer.update_stats(duration_ms, success=(status == "success"))
+
+            # Structured Logging
+            log_entry = {
+                "timestamp": start_time,
+                "workflow": workflow,
+                "status": status,
+                "duration": duration_ms / 1000.0,
+                "error": error_msg,
+                "meta": meta,
+                "retries": job.get("retries", 0),
+                "batch_size": batch_size
+            }
+            
+            try:
+                with open(self.job_log_file, "a", encoding="utf-8") as f:
+                    f.write(json.dumps(log_entry) + "\n")
+            except Exception as e:
+                logger.error(f"Failed to write job log: {e}")

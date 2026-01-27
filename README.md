@@ -18,7 +18,7 @@ Designed for AI agents and power users who need deterministic, scalable, and mai
 *   **Operations:** Manage Docker, Postgres, and Redis directly via CLI.
 *   **Bundle & Publish:** Export to ZIP or upload directly to your n8n instance API.
 *   **AI Assistance:** Optimize prompts and leverage local LLMs (Ollama).
-*   **Monitoring & Scheduling:** Real-time execution monitoring and job queuing.
+*   **Adaptive Control Plane:** Dynamic batch sizing, phase gating, and intelligent queuing for high-scale execution.
 *   **Environment Config:** Load environment-specific settings with `--env`.
 
 ## Installation
@@ -49,12 +49,12 @@ pip install n8n-factory
 *   `ops`: Runtime operations (`logs`, `db`, `redis`, `exec`, `monitor`).
 *   `normalize`: Standardize JSON structure.
 *   `optimize`: Refactor and clean up workflows.
-*   `harden`: Inject debug logging and error handling.
+*   `harden`: Inject error handling and logging.
 *   `simulate`: Run logic locally (export to HTML/CSV).
 *   `diff`: Compare recipe vs JSON.
 *   `ai`: AI tools (chat, list models, optimize prompts).
 *   `worker`: Start the workflow scheduler worker.
-*   `queue`: Manage the job queue.
+*   `queue`: Manage the job queue (add, list, batch, gate).
 *   `login`: Setup environment configuration.
 *   `stats`: View workflow metrics.
 *   `creds`: Manage/scaffold credentials.
@@ -90,6 +90,14 @@ n8n-factory ops monitor
 n8n-factory ops monitor <EXECUTION_ID>
 ```
 
+### Advanced Control Plane
+For complex, high-throughput environments, the factory provides:
+*   **Adaptive Batch Sizing:** Automatically adjusts throughput based on latency.
+*   **Phase Gating:** Controls workflow dependencies (e.g., Phase 2 waits for Phase 1).
+*   **Delayed Execution:** Precise scheduling and backoff strategies.
+
+Refer to [AGENTS.md](AGENTS.md) for detailed protocols on using these advanced features.
+
 ### Job Queue & Worker
 Queue workflows for execution and let the worker manage concurrency. The worker is robust, automatically requeueing failed jobs.
 
@@ -99,14 +107,9 @@ Queue workflows for execution and let the worker manage concurrency. The worker 
 n8n-factory queue run --concurrency 5 --poll 5 --broker-port 6580
 ```
 
-**Legacy Worker Start:**
-```bash
-n8n-factory worker start --concurrency 5
-```
-
 **Queue a Job:**
 ```bash
-n8n-factory queue add my_workflow_id --mode id
+n8n-factory queue add my_workflow_id --mode id --meta '{"phase": "1"}'
 ```
 
 **Manage Queue:**

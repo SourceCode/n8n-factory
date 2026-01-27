@@ -57,7 +57,7 @@ from .logger import logger, setup_logger
 from .utils import load_recipe
 from .commands.ai import ask_command, list_models_command, optimize_prompt_command
 from .commands.ops import ops_monitor_command
-from .commands.schedule import schedule_worker_command, schedule_add_command, schedule_list_command, schedule_clear_command, schedule_run_command
+from .commands.schedule import schedule_worker_command, schedule_add_command, schedule_list_command, schedule_clear_command, schedule_run_command, schedule_reset_cursors_command, schedule_control_batch, schedule_control_gate
 
 console = Console()
 
@@ -158,6 +158,8 @@ def main():
     
     q_add = queue_subs.add_parser("add")
     q_add.add_argument("workflow"); q_add.add_argument("--mode", default="id", choices=["id", "file"]); q_add.add_argument("--data", default="{}")
+    q_add.add_argument("--meta", default="{}")
+    q_add.add_argument("--delay", type=int, default=0, help="Delay in ms")
     
     q_run = queue_subs.add_parser("run")
     q_run.add_argument("--concurrency", "-c", type=int, default=5)
@@ -168,6 +170,20 @@ def main():
     q_list.add_argument("--limit", type=int, default=20); q_list.add_argument("--json", action="store_true")
     
     q_clear = queue_subs.add_parser("clear")
+    
+    q_reset = queue_subs.add_parser("reset-cursors")
+    q_reset.add_argument("run_id")
+
+    q_batch = queue_subs.add_parser("batch")
+    q_batch.add_argument("action", choices=["get", "set"])
+    q_batch.add_argument("key", nargs="?")
+    q_batch.add_argument("value", nargs="?")
+
+    q_gate = queue_subs.add_parser("gate")
+    q_gate.add_argument("action", choices=["get", "set"])
+    q_gate.add_argument("phase")
+    q_gate.add_argument("--dependency")
+    q_gate.add_argument("--condition", default="complete")
 
     # List
     list_p = subparsers.add_parser("list")
@@ -679,15 +695,21 @@ def main():
         
         elif args.command == "queue":
             if args.queue_command == "add":
-                schedule_add_command(args.workflow, args.mode, args.data)
+                schedule_add_command(args.workflow, args.mode, args.data, args.meta, args.delay)
             elif args.queue_command == "run":
                 schedule_run_command(concurrency=args.concurrency, poll=args.poll, broker_port=args.broker_port)
             elif args.queue_command == "list":
                 schedule_list_command(args.limit, args.json)
             elif args.queue_command == "clear":
                 schedule_clear_command()
+            elif args.queue_command == "reset-cursors":
+                schedule_reset_cursors_command(args.run_id)
+            elif args.queue_command == "batch":
+                schedule_control_batch(args.action, args.key, args.value)
+            elif args.queue_command == "gate":
+                schedule_control_gate(args.action, args.phase, args.dependency, args.condition)
             else:
-                console.print("Use: queue add | list | clear")
+                console.print("Use: queue add | list | clear | reset-cursors | batch | gate")
 
         elif args.command == "list": list_templates(args.templates, json_output=args.json)
         elif args.command == "info": info_command(args.recipe, dependencies=args.dependencies, json_output=args.json)

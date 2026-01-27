@@ -152,6 +152,9 @@ cython_debug/
 .vscode/
 .idea/
 
+# Runtime Logs
+logs/
+
 # n8n factory output (optional if you want to commit generated workflows or not)
 # Defaulting to ignore generated json unless forced
 # *.json

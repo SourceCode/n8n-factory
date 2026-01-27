@@ -75,12 +75,35 @@ class TestQueueRequeue(unittest.TestCase):
         mock_op.inspect_redis.assert_called_with(["LPUSH", "n8n_factory:job_queue", json.dumps(job)])
 
 class TestSchedulerReliability(unittest.TestCase):
-    def setUp(self):
+    @patch('n8n_factory.scheduler.AdaptiveBatchSizer')
+    @patch('n8n_factory.scheduler.PhaseGate')
+    def setUp(self, MockGate, MockSizer):
         self.mock_op = MagicMock()
         self.mock_queue = MagicMock()
+        
+        # Scheduler init creates sizer/gate. We mock them class-wide or instance-wide.
+        # Since we use patch in setup, we need to manually assign mocks or rely on patch.
+        # But Scheduler() is called inside setUp, so patch must be active.
+        # The decorators on setUp act on the method execution, but we need them active during Scheduler() call.
+        # Wait, decorators on setUp are tricky. Better to use patcher start/stop or context managers.
+        # Or just mock the instance attributes after creation.
+        
+        self.patcher_sizer = patch('n8n_factory.scheduler.AdaptiveBatchSizer')
+        self.patcher_gate = patch('n8n_factory.scheduler.PhaseGate')
+        self.MockSizer = self.patcher_sizer.start()
+        self.MockGate = self.patcher_gate.start()
+        
         self.scheduler = Scheduler(concurrency=1)
         self.scheduler.operator = self.mock_op
         self.scheduler.queue = self.mock_queue
+        
+        # Setup default mock returns for sizer/gate
+        self.scheduler.sizer.get_batch_size.return_value = 10
+        self.scheduler.gate.can_run.return_value = True
+
+    def tearDown(self):
+        self.patcher_sizer.stop()
+        self.patcher_gate.stop()
 
     def test_execute_job_success(self):
         job = {"workflow": "wf1", "mode": "id"}
@@ -92,20 +115,21 @@ class TestSchedulerReliability(unittest.TestCase):
         self.mock_queue.requeue.assert_not_called()
 
     def test_execute_job_exception_requeues(self):
-        job = {"workflow": "wf1", "mode": "id"}
+        job = {"workflow": "wf1", "mode": "id", "retries": 0}
         self.mock_op.execute_workflow.side_effect = Exception("Connection error")
         
         self.scheduler._execute_job(job)
         
-        self.mock_queue.requeue.assert_called_with(job)
+        # Expect backoff delay
+        self.mock_queue.requeue.assert_called_with(job, delay=2000)
 
     def test_execute_job_failure_msg_requeues(self):
-        job = {"workflow": "wf1", "mode": "id"}
+        job = {"workflow": "wf1", "mode": "id", "retries": 0}
         self.mock_op.execute_workflow.return_value = "Execution failed: something went wrong"
         
         self.scheduler._execute_job(job)
         
-        self.mock_queue.requeue.assert_called_with(job)
+        self.mock_queue.requeue.assert_called_with(job, delay=2000)
 
     def test_execute_job_passes_broker_port(self):
         self.scheduler.broker_port = 7777
@@ -114,11 +138,11 @@ class TestSchedulerReliability(unittest.TestCase):
         
         self.scheduler._execute_job(job)
         
-        self.mock_op.execute_workflow.assert_called_with(
-            workflow_id="wf1", 
-            env={"N8N_PORT": "5679"}, 
-            broker_port=7777
-        )
+        # Check that env has BATCH_SIZE and port matches
+        call_args = self.mock_op.execute_workflow.call_args
+        self.assertEqual(call_args[1]['workflow_id'], "wf1")
+        self.assertEqual(call_args[1]['broker_port'], 7777)
+        self.assertIn("BATCH_SIZE", call_args[1]['env'])
 
 class TestCLICommands(unittest.TestCase):
     @patch('n8n_factory.commands.schedule.Scheduler')
