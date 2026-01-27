@@ -52,6 +52,9 @@ from .commands.project import project_init_command
 from .commands.telemetry_cmd import telemetry_export_command
 from .logger import logger, setup_logger
 from .utils import load_recipe
+from .commands.ai import ask_command, list_models_command, optimize_prompt_command
+from .commands.ops import ops_monitor_command
+from .commands.schedule import schedule_worker_command, schedule_add_command, schedule_list_command, schedule_clear_command
 
 console = Console()
 
@@ -129,10 +132,34 @@ def main():
     ops_ana.add_argument("--service", "-s", default="n8n")
     ops_ana.add_argument("--json", action="store_true")
 
+    ops_mon = ops_subs.add_parser("monitor")
+    ops_mon.add_argument("id", nargs="?", help="Execution ID to watch")
+    ops_mon.add_argument("--json", action="store_true")
+
     # Security
     sec_p = subparsers.add_parser("security")
     sec_p.add_argument("recipe")
     sec_p.add_argument("--json", action="store_true")
+
+    # Worker
+    worker_p = subparsers.add_parser("worker")
+    worker_subs = worker_p.add_subparsers(dest="worker_command")
+    
+    w_start = worker_subs.add_parser("start")
+    w_start.add_argument("--concurrency", "-c", type=int, default=5)
+    w_start.add_argument("--poll", "-p", type=int, default=5)
+
+    # Queue
+    queue_p = subparsers.add_parser("queue")
+    queue_subs = queue_p.add_subparsers(dest="queue_command")
+    
+    q_add = queue_subs.add_parser("add")
+    q_add.add_argument("workflow"); q_add.add_argument("--mode", default="id", choices=["id", "file"]); q_add.add_argument("--data", default="{}")
+    
+    q_list = queue_subs.add_parser("list")
+    q_list.add_argument("--limit", type=int, default=20); q_list.add_argument("--json", action="store_true")
+    
+    q_clear = queue_subs.add_parser("clear")
 
     # List
     list_p = subparsers.add_parser("list")
@@ -316,6 +343,24 @@ def main():
     # Version
     ver_p = subparsers.add_parser("version")
     ver_p.add_argument("--json", action="store_true")
+
+    # AI
+    ai_p = subparsers.add_parser("ai")
+    ai_subs = ai_p.add_subparsers(dest="ai_command")
+    
+    ai_chat = ai_subs.add_parser("chat")
+    ai_chat.add_argument("prompt")
+    ai_chat.add_argument("--model", "-m")
+    ai_chat.add_argument("--system", "-s")
+    ai_chat.add_argument("--json", action="store_true")
+
+    ai_list = ai_subs.add_parser("list")
+    ai_list.add_argument("--json", action="store_true")
+
+    ai_opt = ai_subs.add_parser("optimize")
+    ai_opt.add_argument("prompt")
+    ai_opt.add_argument("--model", "-m")
+    ai_opt.add_argument("--json", action="store_true")
 
     # Schema
     subparsers.add_parser("schema")
@@ -524,6 +569,9 @@ def main():
             elif args.ops_command == "analyze-logs":
                 res = operator.analyze_logs(args.service)
                 output = res
+            elif args.ops_command == "monitor":
+                ops_monitor_command(watch_id=args.id, json_output=args.json)
+                sys.exit(0) # Exit here as monitor handles its own output
             else:
                 parser.print_help()
                 sys.exit(0)
@@ -532,6 +580,22 @@ def main():
                  print(json.dumps(output, indent=2))
             else:
                  console.print(output)
+
+        elif args.command == "worker":
+            if args.worker_command == "start":
+                schedule_worker_command(concurrency=args.concurrency, poll=args.poll)
+            else:
+                console.print("Use: worker start")
+        
+        elif args.command == "queue":
+            if args.queue_command == "add":
+                schedule_add_command(args.workflow, args.mode, args.data)
+            elif args.queue_command == "list":
+                schedule_list_command(args.limit, args.json)
+            elif args.queue_command == "clear":
+                schedule_clear_command()
+            else:
+                console.print("Use: queue add | list | clear")
 
         elif args.command == "list": list_templates(args.templates, json_output=args.json)
         elif args.command == "info": info_command(args.recipe, dependencies=args.dependencies, json_output=args.json)
@@ -627,6 +691,16 @@ def main():
         elif args.command == "coverage": 
             recipe = load_recipe(args.recipe)
             coverage_command(recipe, args.history, json_output=args.json)
+
+        elif args.command == "ai":
+            if args.ai_command == "chat":
+                ask_command(args.prompt, model=args.model, system=args.system, json_output=args.json)
+            elif args.ai_command == "list":
+                list_models_command(json_output=args.json)
+            elif args.ai_command == "optimize":
+                optimize_prompt_command(args.prompt, model=args.model, json_output=args.json)
+            else:
+                console.print("Use: ai chat <prompt> | list | optimize <prompt>")
 
         elif args.command == "schema":
              print(json.dumps(Recipe.model_json_schema(), indent=2))

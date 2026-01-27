@@ -1,7 +1,7 @@
 import subprocess
 import json
 import logging
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Union
 
 logger = logging.getLogger("n8n_factory")
 
@@ -62,12 +62,13 @@ class SystemOperator:
             logger.error(f"DB Query failed: {e}")
             return []
 
-    def inspect_redis(self, command: str) -> str:
+    def inspect_redis(self, command: Union[str, List[str]]) -> str:
         """
         Runs a redis-cli command.
+        Accepts a string (space-separated) or a list of arguments (safer for data).
         """
-        # e.g. "INFO", "LLEN queue"
-        cmd = ["docker", "exec", self.redis_container, "redis-cli"] + command.split()
+        redis_args = command.split() if isinstance(command, str) else command
+        cmd = ["docker", "exec", self.redis_container, "redis-cli"] + redis_args
         try:
             return self._run_cmd(cmd)
         except RuntimeError as e:
@@ -136,3 +137,32 @@ class SystemOperator:
             "crashes_detected": crashed > 0,
             "status": "Healthy" if error_count == 0 and not crashed else "Unhealthy"
         }
+
+    def get_active_executions(self) -> List[Dict[str, Any]]:
+        """
+        Fetches currently running executions from the database.
+        """
+        query = """
+            SELECT e.id, e."workflowId", w.name, e.status, e."startedAt", e.mode 
+            FROM execution_entity e 
+            LEFT JOIN workflow_entity w ON e."workflowId" = w.id 
+            WHERE e.status = 'running' 
+            ORDER BY e."startedAt" DESC
+        """
+        return self.run_db_query(query)
+
+    def get_execution_details(self, execution_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Fetches status and basic details for a specific execution.
+        Note: We avoid fetching the full 'data' blob here if possible to keep it light, 
+        unless we need to inspect specific node progress.
+        For progress monitoring, we often need 'data'.
+        """
+        query = f"""
+            SELECT e.id, e."workflowId", w.name, e.status, e."startedAt", e.mode, e.data
+            FROM execution_entity e
+            LEFT JOIN workflow_entity w ON e."workflowId" = w.id
+            WHERE e.id = '{execution_id}'
+        """
+        results = self.run_db_query(query)
+        return results[0] if results else None
