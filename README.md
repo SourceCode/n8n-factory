@@ -14,11 +14,12 @@ Designed for AI agents and power users who need deterministic, scalable, and mai
 *   **Validation:** Detects circular imports, orphan nodes, and potential secrets.
 *   **Optimization:** Automatically merges nodes, prunes dead code, and standardizes JSON structure.
 *   **Hardening:** Inject error triggers and debug logging automatically.
-*   **Simulation:** Dry-run workflows locally with mock data to verify logic before deployment.
+*   **Simulation:** Dry-run workflows locally with mock data and export HTML/CSV reports.
 *   **Operations:** Manage Docker, Postgres, and Redis directly via CLI.
 *   **Bundle & Publish:** Export to ZIP or upload directly to your n8n instance API.
 *   **AI Assistance:** Optimize prompts and leverage local LLMs (Ollama).
 *   **Monitoring & Scheduling:** Real-time execution monitoring and job queuing.
+*   **Environment Config:** Load environment-specific settings with `--env`.
 
 ## Installation
 
@@ -49,11 +50,14 @@ pip install n8n-factory
 *   `normalize`: Standardize JSON structure.
 *   `optimize`: Refactor and clean up workflows.
 *   `harden`: Inject debug logging and error handling.
-*   `simulate`: Run logic locally.
+*   `simulate`: Run logic locally (export to HTML/CSV).
 *   `diff`: Compare recipe vs JSON.
 *   `ai`: AI tools (chat, list models, optimize prompts).
 *   `worker`: Start the workflow scheduler worker.
 *   `queue`: Manage the job queue.
+*   `login`: Setup environment configuration.
+*   `stats`: View workflow metrics.
+*   `creds`: Manage/scaffold credentials.
 
 See `n8n-factory --help` for all commands.
 

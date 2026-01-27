@@ -70,6 +70,14 @@ Create a Python-based tool to assemble n8n workflows from reusable, optimized te
 - [x] **Security:** `security` audit command.
 - [x] **Documentation:** Comprehensive `AGENTS.md`.
 
+### Phase 9: Enterprise Features & Polish
+**Goal:** Enhance the factory with operational tools, reporting, and environment management.
+- [x] **Job Queue & Scheduler:** `worker` and `queue` commands for managing workflow executions (Redis-backed).
+- [x] **Advanced Simulation:** HTML/CSV export options for simulation reports (`--export-html`).
+- [x] **Environment Management:** `--env` flag and `login` command for handling different deployment environments.
+- [x] **Security Enhancements:** Secret masking in build logs and strict credential checks.
+- [x] **Workflow Metrics:** `stats` command to analyze node counts and complexity.
+
 ## AI Workflow Strategy (for AGENTS.md)
 1.  **Discovery:** AI Agent checks `templates/` to see available tools.
 2.  **Planning:** AI Agent constructs a `recipe.yaml` mapping a logical flow to specific templates.

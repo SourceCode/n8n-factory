@@ -247,10 +247,20 @@ The following templates are available in the `templates/` directory. Use the **T
 
 ### Operations
 *   `n8n-factory build <recipe_path> --json`: Compiles a recipe into a workflow JSON.
+*   `n8n-factory build <recipe_path> --env production --json`: Builds with environment-specific variables.
+*   `n8n-factory simulate <recipe_path> --export-html report.html --export-csv report.csv --json`: Simulates a recipe and exports reports.
 *   `n8n-factory ops logs --service n8n --tail 50 --json`: Retrieves n8n service logs.
 *   `n8n-factory ops exec --id <workflow_id> --json`: Executes a deployed workflow.
 *   `n8n-factory optimize <workflow_path> --output <output_path>`: Optimizes an existing workflow file.
 *   `n8n-factory harden <workflow_path> --output <output_path> --logging --error-trigger`: Adds error handling and logging to a workflow.
+
+### Management & Scheduling
+*   `n8n-factory login`: Interactive login to setup `.env` (use non-interactively via env vars if possible).
+*   `n8n-factory stats <recipe_path> --json`: Displays metrics for a recipe.
+*   `n8n-factory creds --scaffold --json`: Generates credential placeholders.
+*   `n8n-factory worker start --concurrency 5`: Starts a background worker for queued jobs.
+*   `n8n-factory queue add <workflow_id> --json`: Adds a job to the execution queue.
+*   `n8n-factory queue list --json`: Lists pending jobs.
 
 ## Best Practices for Agents
 
