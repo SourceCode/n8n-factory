@@ -5,28 +5,39 @@ from typing import Optional
 from rich.console import Console
 from .operator import SystemOperator
 from .queue_manager import QueueManager
-from .control_plane import AdaptiveBatchSizer, PhaseGate
+from .control_plane import AdaptiveBatchSizer, PhaseGate, AutoRefiller
 from .logger import logger
 
 console = Console()
 
 class Scheduler:
-    def __init__(self, concurrency: int = 5, poll_interval: int = 5, broker_port: Optional[int] = None):
+    def __init__(self, concurrency: int = 5, poll_interval: int = 5, broker_port: Optional[int] = None, refill_command: Optional[str] = None, refill_threshold: int = 5):
         self.concurrency = concurrency
         self.poll_interval = poll_interval
         self.broker_port = broker_port
+        self.refill_command = refill_command
+        self.refill_threshold = refill_threshold
+        
         self.operator = SystemOperator()
         self.queue = QueueManager(operator=self.operator)
         self.sizer = AdaptiveBatchSizer(self.operator)
         self.gate = PhaseGate(self.operator)
+        self.refiller = AutoRefiller(self.operator)
+        
         self.running = False
+        self.jobs_processed_session = 0
         
         # Ensure log directory exists
-        os.makedirs("logs", exist_ok=True)
-        self.job_log_file = "logs/jobs.jsonl"
+        self.job_log_file = os.getenv("N8N_FACTORY_LOG_PATH", "logs/jobs.jsonl")
+        log_dir = os.path.dirname(self.job_log_file)
+        if log_dir:
+            os.makedirs(log_dir, exist_ok=True)
 
     def start(self):
         console.print(f"[bold green]Starting Scheduler (Concurrency: {self.concurrency}, Broker Port: {self.broker_port or 'Default'})[/bold green]")
+        if self.refill_command:
+            console.print(f"[cyan]Auto-refill enabled (Threshold: {self.refill_threshold}):[/cyan] {self.refill_command}")
+            
         self.running = True
         
         while self.running:
@@ -48,12 +59,17 @@ class Scheduler:
         # 2. Check slots
         slots_available = self.concurrency - active_count
         
+        # 3. Check queue sizes (needed for refill check regardless of slots)
+        queue_size = self.queue.size()
+        delayed_size = self.queue.delayed_size()
+        total_queued = queue_size + delayed_size
+
+        # --- Auto Refill Check ---
+        if self.refill_command:
+            self.refiller.check_and_refill(total_queued, self.refill_threshold, self.refill_command)
+        
         if slots_available > 0:
-            # 3. Check queue
-            queue_size = self.queue.size()
-            delayed_size = self.queue.delayed_size()
-            
-            if queue_size > 0 or delayed_size > 0:
+            if total_queued > 0:
                 logger.info(f"Slots available: {slots_available}. Queue size: {queue_size} (Delayed: {delayed_size})")
                 
                 # Dequeue and run up to slots_available
@@ -65,7 +81,12 @@ class Scheduler:
                     
                     self._execute_job(job)
             else:
-                # logger.debug("Queue empty.")
+                # Queue is empty. Check cursors for warning.
+                # Heuristic: If we have active run_ids with remaining items, warn.
+                # This is tricky without knowing *which* run_ids are active. 
+                # We can check if any gate is blocked? No.
+                # Ideally, we'd need a registry of active runs. 
+                # For now, we skip generic warning to avoid noise unless we have specific context.
                 pass
         else:
             logger.debug(f"Max concurrency reached ({active_count}/{self.concurrency}).")
@@ -89,9 +110,15 @@ class Scheduler:
                 return
 
         # --- Adaptive Batch Sizing ---
-        batch_size = self.sizer.get_batch_size()
+        # Allow override from meta
+        if "batch_size" in meta:
+             batch_size = int(meta["batch_size"])
+        else:
+             batch_size = self.sizer.get_batch_size()
         
-        console.print(f"[blue]Starting job:[/blue] {workflow} [dim](Batch: {batch_size})[/dim]")
+        self.jobs_processed_session += 1
+        console.print(f"[blue]Starting job #{self.jobs_processed_session}:[/blue] {workflow} [dim](Batch: {batch_size})[/dim]")
+        
         start_time = time.time()
         status = "unknown"
         error_msg = None

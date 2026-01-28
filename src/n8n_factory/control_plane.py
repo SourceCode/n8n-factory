@@ -1,5 +1,7 @@
 import json
 import time
+import os
+import subprocess
 from typing import Optional, Dict, Any
 from .operator import SystemOperator
 from .logger import logger
@@ -120,6 +122,7 @@ class AdaptiveBatchSizer:
 
 class PhaseGate:
     KEY_RULES = "n8n_factory:config:gates"
+    FALLBACK_CURSOR_FILE = ".n8n-factory/cursors.json"
     
     def __init__(self, operator: SystemOperator):
         self.operator = operator
@@ -150,35 +153,20 @@ class PhaseGate:
             return True # No rule = open
             
         dep_phase = rule.get("dependency")
-        # Check dependency cursor
-        # Key convention: n8n_factory:cursors:<run_id>
-        # Fields: <phase>_current, <phase>_total
-        
         cursor_key = f"n8n_factory:cursors:{run_id}"
-        
-        # We need current and total for the dependency phase
-        # Assuming keys like "phase_2_current" and "phase_2_total"
-        # The user might name phases arbitrarily, but we assume strict naming for now or config match.
-        
         dep_current_field = f"{dep_phase}_current"
         dep_total_field = f"{dep_phase}_total"
         
-        # Fetch both
-        vals = self.operator.inspect_redis(["HMGET", cursor_key, dep_current_field, dep_total_field])
-        if not vals:
-            return False
-            
-        lines = vals.splitlines()
-        # redis-cli returns lines. if items are missing they might be empty strings or nil
-        # Using HMGET with cli usually returns values on separate lines.
+        # 1. Try Redis
+        current_val, total_val = self._check_redis(cursor_key, dep_current_field, dep_total_field)
         
-        try:
-            current_val = int(lines[0]) if len(lines) > 0 and lines[0].strip() else 0
-            total_val = int(lines[1]) if len(lines) > 1 and lines[1].strip() else 0
-        except (ValueError, IndexError):
-            # If total is unknown, we can't gate properly, assume closed?
-            # Or assume open if we haven't started?
-            # Safer to assume closed if rule exists but data missing.
+        # 2. Try File Fallback if Redis missed
+        if current_val is None or total_val is None:
+            current_val, total_val = self._check_file(run_id, dep_current_field, dep_total_field)
+
+        # 3. Evaluate
+        # Default to locked if data missing
+        if current_val is None or total_val is None:
             return False
             
         if rule.get("condition") == "complete":
@@ -189,3 +177,56 @@ class PhaseGate:
             return False
             
         return True
+
+    def _check_redis(self, key, field_current, field_total):
+        vals = self.operator.inspect_redis(["HMGET", key, field_current, field_total])
+        if not vals:
+            return None, None
+        
+        lines = vals.splitlines()
+        try:
+            c = int(lines[0]) if len(lines) > 0 and lines[0].strip() else None
+            t = int(lines[1]) if len(lines) > 1 and lines[1].strip() else None
+            return c, t
+        except (ValueError, IndexError):
+            return None, None
+
+    def _check_file(self, run_id, field_current, field_total):
+        if not os.path.exists(self.FALLBACK_CURSOR_FILE):
+            return None, None
+            
+        try:
+            with open(self.FALLBACK_CURSOR_FILE, 'r') as f:
+                data = json.load(f)
+                run_data = data.get(run_id, {})
+                c = run_data.get(field_current)
+                t = run_data.get(field_total)
+                return c, t
+        except Exception as e:
+            logger.warning(f"Failed to read fallback cursor file: {e}")
+            return None, None
+
+class AutoRefiller:
+    def __init__(self, operator: SystemOperator):
+        self.operator = operator
+        self.last_refill = 0
+        self.cooldown = 10 # seconds
+
+    def check_and_refill(self, current_size: int, threshold: int, command: str):
+        if current_size < threshold:
+            now = time.time()
+            if now - self.last_refill > self.cooldown:
+                logger.info(f"Queue size {current_size} < threshold {threshold}. Triggering refill.")
+                self.last_refill = now
+                try:
+                    # Execute command in background or blocking? Blocking safer to avoid fork bombs.
+                    # But we want the scheduler to keep running. Background preferable?
+                    # "Add a native queue manager mode" implies the scheduler does this.
+                    # Let's run blocking but with timeout, or background.
+                    # subprocess.Popen matches typical "worker" patterns.
+                    
+                    # Split command string safely?
+                    # Assuming command is a simple shell string
+                    subprocess.Popen(command, shell=True)
+                except Exception as e:
+                    logger.error(f"Failed to trigger refill command: {e}")

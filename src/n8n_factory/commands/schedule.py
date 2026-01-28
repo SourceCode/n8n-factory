@@ -17,11 +17,17 @@ def schedule_worker_command(concurrency: int = 5, poll: int = 5):
     scheduler = Scheduler(concurrency=concurrency, poll_interval=poll)
     scheduler.start()
 
-def schedule_run_command(concurrency: int = 5, poll: int = 5, broker_port: Optional[int] = None):
+def schedule_run_command(concurrency: int = 5, poll: int = 5, broker_port: Optional[int] = None, refill_cmd: Optional[str] = None, refill_threshold: int = 5):
     """
     Starts the queue consumer (worker) with optional broker port override.
     """
-    scheduler = Scheduler(concurrency=concurrency, poll_interval=poll, broker_port=broker_port)
+    scheduler = Scheduler(
+        concurrency=concurrency, 
+        poll_interval=poll, 
+        broker_port=broker_port,
+        refill_command=refill_cmd,
+        refill_threshold=refill_threshold
+    )
     scheduler.start()
 
 def schedule_add_command(workflow: str, mode: str = "id", data: str = "{}", meta: str = "{}", delay: int = 0):

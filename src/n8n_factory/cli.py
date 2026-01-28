@@ -165,6 +165,8 @@ def main():
     q_run.add_argument("--concurrency", "-c", type=int, default=5)
     q_run.add_argument("--poll", "-p", type=int, default=5)
     q_run.add_argument("--broker-port", type=int, help="Override broker port")
+    q_run.add_argument("--refill-cmd", help="Command to execute when queue is low")
+    q_run.add_argument("--refill-threshold", type=int, default=5, help="Queue size threshold for refill")
 
     q_list = queue_subs.add_parser("list")
     q_list.add_argument("--limit", type=int, default=20); q_list.add_argument("--json", action="store_true")
@@ -697,7 +699,13 @@ def main():
             if args.queue_command == "add":
                 schedule_add_command(args.workflow, args.mode, args.data, args.meta, args.delay)
             elif args.queue_command == "run":
-                schedule_run_command(concurrency=args.concurrency, poll=args.poll, broker_port=args.broker_port)
+                schedule_run_command(
+                    concurrency=args.concurrency, 
+                    poll=args.poll, 
+                    broker_port=args.broker_port,
+                    refill_cmd=args.refill_cmd,
+                    refill_threshold=args.refill_threshold
+                )
             elif args.queue_command == "list":
                 schedule_list_command(args.limit, args.json)
             elif args.queue_command == "clear":

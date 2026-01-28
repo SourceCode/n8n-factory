@@ -1,6 +1,12 @@
 # Changelog
 
 ## [Unreleased]
+
+## [1.7.0]
+- Added `queue run` auto-refill capabilities (`--refill-cmd`, `--refill-threshold`).
+- Added default `meta` and `delay` handling in `queue add`.
+- Improved test coverage and fixed scheduler mock tests.
+- Fixed `test_queue_add` and `test_schedule_run_command` failures.
 - Added `login` command to setup `.env`.
 - Added `stats` command for workflow metrics.
 - Added `--env` flag to load environment-specific configurations.

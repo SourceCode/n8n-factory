@@ -149,7 +149,7 @@ class TestCLICommands(unittest.TestCase):
     def test_schedule_run_command(self, MockScheduler):
         schedule_run_command(concurrency=10, poll=2, broker_port=6000)
         
-        MockScheduler.assert_called_with(concurrency=10, poll_interval=2, broker_port=6000)
+        MockScheduler.assert_called_with(concurrency=10, poll_interval=2, broker_port=6000, refill_command=None, refill_threshold=5)
         MockScheduler.return_value.start.assert_called_once()
 
 if __name__ == '__main__':

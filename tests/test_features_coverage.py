@@ -78,7 +78,7 @@ def test_queue_add(capsys):
         with patch.object(sys, 'argv', ["n8n-factory", "queue", "add", "my_workflow", "--data", '{"a":1}']):
             main()
         
-        instance.enqueue.assert_called_once_with("my_workflow", inputs={"a": 1}, mode="id")
+        instance.enqueue.assert_called_once_with("my_workflow", inputs={"a": 1}, mode="id", meta={}, delay=0)
         captured = capsys.readouterr()
         assert "Job added to queue" in captured.out
 

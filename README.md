@@ -103,8 +103,9 @@ Queue workflows for execution and let the worker manage concurrency. The worker 
 
 **Run the Queue Consumer (Recommended):**
 ```bash
-# Run with concurrency 5, poll every 5s, optional broker port override
-n8n-factory queue run --concurrency 5 --poll 5 --broker-port 6580
+# Run with concurrency 5, poll every 5s.
+# Optionally trigger a refill command when queue drops below 5 items.
+n8n-factory queue run --concurrency 5 --poll 5 --broker-port 6580 --refill-cmd "python ./scripts/refill_jobs.py" --refill-threshold 5
 ```
 
 **Queue a Job:**

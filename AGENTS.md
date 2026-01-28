@@ -166,6 +166,16 @@ For high-throughput or complex dependency chains, utilize the Control Plane feat
     # Or check structured logs in logs/jobs.jsonl
     ```
 
+### D. Auto-Refill Strategy
+**Use Case:** Keep the queue saturated from an external source (e.g., a database polling script) without overfilling it.
+
+**Agent Action:**
+1.  **Run Worker with Refill:**
+    ```bash
+    n8n-factory queue run --refill-cmd "python populate_queue.py" --refill-threshold 10
+    ```
+    *Result:* When the queue size drops below 10, the worker executes `python populate_queue.py` in the background to fetch more work.
+
 ---
 
 ## 5. Debugging & Optimization Protocol

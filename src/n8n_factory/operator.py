@@ -40,14 +40,17 @@ class SystemOperator:
         """
         Executes a SQL query against the n8n Postgres database and returns JSON-friendly dicts.
         """
+        import os
         # Wrapping query to force JSON output per row
         full_query = f"COPY (SELECT row_to_json(t) FROM ({query}) t) TO STDOUT;"
         
         # User defaults: postgres user, n8n db. 
         # Ideally configurable, but standard for n8n docker stacks.
+        pg_user = os.getenv("POSTGRES_USER", "postgres")
+        
         cmd = [
             "docker", "exec", self.db_container,
-            "psql", "-U", "postgres", "-d", "n8n", "-c", full_query
+            "psql", "-U", pg_user, "-d", "n8n", "-c", full_query
         ]
         
         try:
