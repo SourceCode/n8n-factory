@@ -191,7 +191,45 @@ If a workflow fails or performs poorly:
 4.  **Harden:**
     `n8n-factory harden recipes/broken_workflow.yaml --logging --error-trigger --output recipes/fixed.yaml` -> Automatically injects error handling nodes.
 
-## 6. Best Practices
+## 6. Design Patterns
+
+### Standard Queue/Loop Pattern
+Use this pattern for robust iteration over large datasets without memory overflows.
+
+1.  **Structure:** `Source -> SplitInBatches -> Processing -> LoopBack`
+2.  **Implementation:**
+    *   **SplitInBatches:** Use `batchSize: 1` for safety.
+    *   **LoopBack:** Use `connections_loop` to create the cycle back to `SplitInBatches` (bypasses DAG check).
+    *   **Sink:** Connect the "Done" output (index 1) to a `no_op` node.
+
+    ```yaml
+    - id: "batch_node"
+      template: "split_in_batches"
+      params:
+        batchSize: 1
+    
+    - id: "process"
+      template: "ollama_http_generate"
+      connections_loop:
+        - "batch_node" # The Loop Edge
+    
+    - id: "done_sink"
+      template: "no_op"
+      connections_from:
+        - node: "batch_node"
+          type: "main"
+          index: 1
+    ```
+
+### Concurrency Safety
+For resource-intensive nodes (e.g., local LLM inference):
+1.  **Batch Size:** Always set `batchSize: 1` in `split_in_batches`.
+2.  **Timeouts:** Use tiered timeouts:
+    *   Expansion/Template: 180s
+    *   Draft/Edit: 600s
+3.  **Queue:** Use `n8n-factory queue` to manage concurrency externally if possible.
+
+## 7. Best Practices
 
 *   **Idempotency:** Design `code` nodes to be rerunnable. Use `run_id` from metadata to track state.
 *   **Context:** Use `meta` fields when queuing to pass context (e.g., `{"shard_id": 5}`).

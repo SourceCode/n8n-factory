@@ -42,7 +42,8 @@ def test_assembler_auto_tag(mock_loader):
     ])
     
     wf = asm.assemble(recipe)
-    tags = wf["meta"]["tags"]
+    # Tags are added to the recipe object
+    tags = recipe.tags
     assert "aws" in tags
     assert "database" in tags
 
@@ -73,4 +74,6 @@ def test_assembler_meta_merge(mock_loader):
     mock_loader.return_value.render_template.return_value = {}
     recipe = Recipe(name="R", steps=[], meta={"extra": "value"})
     wf = asm.assemble(recipe)
-    assert wf["meta"]["extra"] == "value"
+    assert "meta" not in wf
+    assert "settings" in wf
+    assert wf["settings"]["executionOrder"] == "v1"

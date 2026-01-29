@@ -22,6 +22,7 @@ class RecipeStep(BaseModel):
     description: Optional[str] = None
     # Improvement #1: Complex Connections
     connections_from: Optional[List[Union[str, Connection]]] = None
+    connections_loop: Optional[List[Union[str, Connection]]] = None
     position: Optional[List[int]] = None
     color: Optional[str] = None
     notes: Optional[str] = None

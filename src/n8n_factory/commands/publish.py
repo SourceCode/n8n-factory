@@ -36,7 +36,7 @@ def publish_workflow(recipe: Recipe, templates_dir: str, activate: bool = False,
             "name": workflow["name"],
             "nodes": workflow["nodes"],
             "connections": workflow["connections"],
-            "meta": workflow["meta"],
+            "settings": workflow.get("settings", {}),
             "active": activate
         }
     

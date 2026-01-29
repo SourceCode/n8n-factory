@@ -1,0 +1,28 @@
+{
+  "parameters": {
+    "url": "{{ base_url | default('http://host.docker.internal:11434') }}/api/generate",
+    "method": "POST",
+    "authentication": "none",
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": {{ {
+        'model': model | default('llama3'),
+        'prompt': prompt,
+        'stream': false,
+        'options': {
+            'temperature': temperature | default(0.7),
+            'num_ctx': num_ctx | default(2048),
+            'num_predict': num_predict | default(128)
+        }
+    } | tojson | tojson }},
+    "options": {
+      "timeout": 600000
+    }
+  },
+  "type": "n8n-nodes-base.httpRequest",
+  "typeVersion": 4.1,
+  "position": [
+    0,
+    0
+  ]
+}

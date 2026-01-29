@@ -105,6 +105,24 @@ class WorkflowAssembler:
             elif previous_node_name:
                 self._add_connection(connections, previous_node_name, node_name)
 
+            # Loop/Back-edge Logic (skips cycle detection)
+            if step.connections_loop is not None:
+                for conn in step.connections_loop:
+                    if isinstance(conn, str):
+                        source_id = conn
+                        conn_type = "main"
+                        conn_index = 0
+                    else:
+                        source_id = conn.node
+                        conn_type = conn.type
+                        conn_index = conn.index
+
+                    source_name = id_to_name.get(source_id)
+                    if not source_name:
+                         raise ValueError(f"Step '{step.id}' loop references unknown step '{source_id}'")
+                    
+                    self._add_connection(connections, source_name, node_name, conn_type, conn_index)
+
             if step.debug:
                 debug_node_name = f"debug_{step.id}"
                 debug_config = self.loader.render_template("debug_logger", {"source_step": step.id})
@@ -124,18 +142,14 @@ class WorkflowAssembler:
             "name": recipe.name,
             "nodes": nodes,
             "connections": connections,
-            "meta": {
-                "instanceId": "generated_by_n8n_factory",
-                "generatedAt": datetime.datetime.now().isoformat(),
-                "description": recipe.description or "",
-                "tags": recipe.tags,
-                "version": "1.6.0" 
+            "settings": {
+                "executionOrder": "v1"
             }
         }
         
-        # Improvement #2: Workflow Meta
-        if recipe.meta:
-            workflow["meta"].update(recipe.meta)
+        # Improvement #2: Workflow Meta (Removed per best practices)
+        # if recipe.meta:
+        #    workflow["meta"].update(recipe.meta)
         
         return workflow
 

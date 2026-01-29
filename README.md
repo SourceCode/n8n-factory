@@ -19,6 +19,7 @@ Designed for AI agents and power users who need deterministic, scalable, and mai
 *   **Bundle & Publish:** Export to ZIP or upload directly to your n8n instance API.
 *   **AI Assistance:** Optimize prompts and leverage local LLMs (Ollama).
 *   **Adaptive Control Plane:** Dynamic batch sizing, phase gating, and intelligent queuing for high-scale execution.
+*   **Cyclic Workflows:** Native support for loops via `connections_loop` (bypasses DAG checks).
 *   **Environment Config:** Load environment-specific settings with `--env`.
 
 ## Installation
