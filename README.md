@@ -10,7 +10,7 @@ Designed for AI agents and power users who need deterministic, scalable, and mai
 ## Features
 
 *   **Assembly:** Compile YAML `recipes` into valid n8n `workflow.json` files.
-*   **Templates:** Extensive library of over 80 reusable node templates covering major services and logic.
+*   **Templates:** Extensive library of over 80 reusable node templates covering major services, logic, and AI utilities (`ollama`, `safe_slugify`, `progress_marker`).
 *   **Validation:** Detects circular imports, orphan nodes, and potential secrets.
 *   **Optimization:** Automatically merges nodes, prunes dead code, and standardizes JSON structure.
 *   **Hardening:** Inject error triggers and debug logging automatically.

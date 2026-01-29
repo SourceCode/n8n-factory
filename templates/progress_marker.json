@@ -1,0 +1,13 @@
+{
+  "parameters": {
+    "operation": "set",
+    "key": "progress:{{ run_id | default('{{ $vars.run_id }}') }}:{{ item_id | default('{{ $json.id }}') }}",
+    "value": "{{ status | default('done') }}",
+    "options": {
+      "ttl": 3600
+    }
+  },
+  "type": "n8n-nodes-base.redis",
+  "typeVersion": 1,
+  "position": [0, 0]
+}

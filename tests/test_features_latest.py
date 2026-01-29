@@ -28,10 +28,6 @@ def test_assembler_loop_connections():
         mock_loader = MockLoader.return_value
         mock_loader.render_template.return_value = {"type": "test"}
         
-        # Create a loop: A -> B -> A
-        # Normal connections_from would trigger cycle detection.
-        # We use connections_loop for B -> A.
-        
         recipe = Recipe(name="Loop Test", steps=[
             RecipeStep(id="A", template="t", connections_loop=["B"]),
             RecipeStep(id="B", template="t", connections_from=["A"])
@@ -40,23 +36,17 @@ def test_assembler_loop_connections():
         
         connections = wf["connections"]
         
-        # Check A -> B (main)
         assert "B" in connections
         assert any(c[0]["node"] == "A" for c in connections["B"]["main"])
         
-        # Check B -> A (loop)
-        # connections_loop=["B"] on A means A has incoming from B.
-        # So "A" in connections should have B.
         assert "A" in connections
         assert any(c[0]["node"] == "B" for c in connections["A"]["main"])
 
 def test_template_split_in_batches_default():
     templates_dir = os.path.abspath("templates")
     loader = TemplateLoader(templates_dir)
-    # This relies on the actual template file being present
     try:
         rendered = loader.render_template("split_in_batches", {})
-        # batchSize defaults to 1
         assert rendered["parameters"]["batchSize"] == 1
     except Exception as e:
         pytest.fail(f"Failed to render split_in_batches: {e}")
@@ -75,6 +65,11 @@ def test_template_ollama_http_generate():
         assert rendered["type"] == "n8n-nodes-base.httpRequest"
         assert rendered["parameters"]["options"]["timeout"] == 600000
         
+        # Check Retries
+        assert rendered["retryOnFail"] is True
+        assert rendered["maxTries"] == 3
+        assert rendered["waitBetweenTries"] == 5000
+        
         # Check JSON Body
         json_body = rendered["parameters"]["jsonBody"]
         import json
@@ -87,3 +82,26 @@ def test_template_ollama_http_generate():
         
     except Exception as e:
         pytest.fail(f"Failed to render ollama_http_generate: {e}")
+
+def test_template_progress_marker():
+    templates_dir = os.path.abspath("templates")
+    loader = TemplateLoader(templates_dir)
+    try:
+        params = {"run_id": "r1", "item_id": "i1"}
+        rendered = loader.render_template("progress_marker", params)
+        assert rendered["type"] == "n8n-nodes-base.redis"
+        assert rendered["parameters"]["key"] == "progress:r1:i1"
+        assert rendered["parameters"]["options"]["ttl"] == 3600
+    except Exception as e:
+        pytest.fail(f"Failed to render progress_marker: {e}")
+
+def test_template_safe_slugify():
+    templates_dir = os.path.abspath("templates")
+    loader = TemplateLoader(templates_dir)
+    try:
+        rendered = loader.render_template("safe_slugify", {"field": "topic"})
+        assert rendered["type"] == "n8n-nodes-base.code"
+        assert "replace" in rendered["parameters"]["code"]
+        assert "topic" in rendered["parameters"]["code"]
+    except Exception as e:
+        pytest.fail(f"Failed to render safe_slugify: {e}")

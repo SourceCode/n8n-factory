@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "mode": "runOnceForAllItems",
+    "language": "javaScript",
+    "code": "return items.map(item => {\n  const field = '{{ field | default('title') }}';\n  const fallback = '{{ fallback_field | default('id') }}';\n  const out = '{{ output_field | default('slug') }}';\n  \n  const text = item.json[field] || '';\n  let slug = text.toString().toLowerCase()\n    .replace(/\\s+/g, '-')\n    .replace(/[^\\w\\-]+/g, '')\n    .replace(/--+/g, '-')\n    .replace(/^-+/, '')\n    .replace(/-+$/, '');\n\n  if (!slug) {\n    slug = item.json[fallback] || 'untitled_' + Math.random().toString(36).substring(7);\n  }\n  \n  item.json[out] = slug;\n  return item;\n});"
+  },
+  "type": "n8n-nodes-base.code",
+  "typeVersion": 2,
+  "position": [0, 0]
+}

@@ -176,6 +176,17 @@ For high-throughput or complex dependency chains, utilize the Control Plane feat
     ```
     *Result:* When the queue size drops below 10, the worker executes `python populate_queue.py` in the background to fetch more work.
 
+### E. Standard Queue Metadata
+When queuing jobs, populate the `meta` field with standard keys for observability and routing.
+
+*   `run_id`: Unique correlation ID for the batch.
+*   `shard_id`: Partition identifier (e.g., "shard_01").
+*   `batch_size`: The intended batch size for this job.
+
+```bash
+n8n-factory queue add workflows/processor.json --meta '{"run_id": "run_123", "shard_id": "s1", "batch_size": 1}'
+```
+
 ---
 
 ## 5. Debugging & Optimization Protocol
@@ -229,7 +240,36 @@ For resource-intensive nodes (e.g., local LLM inference):
     *   Draft/Edit: 600s
 3.  **Queue:** Use `n8n-factory queue` to manage concurrency externally if possible.
 
+### Retry & Backoff Policy
+Wrap unstable HTTP calls (like Ollama) with built-in retry settings. The `ollama_http_generate` template defaults to:
+*   `retryOnFail`: true
+*   `maxTries`: 3
+*   `waitBetweenTries`: 5000 (5s)
+
+### Progress Markers
+For long-running jobs, write a heartbeat to Redis after each item to monitor progress without digging into n8n executions.
+
+```yaml
+- id: "mark_progress"
+  template: "progress_marker"
+  params:
+    run_id: "{{ $vars.run_id }}"
+    item_id: "{{ $json.id }}"
+    status: "processed"
+```
+
 ## 7. Best Practices
+
+### Safe Slugging
+When generating filenames or slugs, use the `safe_slugify` template to prevent errors with empty strings or special characters. It handles fallbacks automatically.
+
+```yaml
+- id: "slug_title"
+  template: "safe_slugify"
+  params:
+    field: "topic"
+    fallback_field: "id"
+```
 
 *   **Idempotency:** Design `code` nodes to be rerunnable. Use `run_id` from metadata to track state.
 *   **Context:** Use `meta` fields when queuing to pass context (e.g., `{"shard_id": 5}`).

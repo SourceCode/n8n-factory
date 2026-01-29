@@ -4,7 +4,7 @@
 
 ## [1.7.0]
 - **Protocol:** Added "Perfect Run" standards for Ollama and Loops.
-- **Templates:** Added `ollama_http_generate` (timeout 600s, no-stream) and updated `split_in_batches` (default size 1).
+- **Templates:** Added `ollama_http_generate` (timeout 600s, no-stream), `progress_marker` (Redis heartbeat), `safe_slugify` (filename generation), and updated `split_in_batches` (default size 1).
 - **Core:** Added `connections_loop` for defining cyclic dependencies (back-edges).
 - **Core:** Publish now strips `meta` and enforces `executionOrder: v1`.
 - Added `queue run` auto-refill capabilities (`--refill-cmd`, `--refill-threshold`).

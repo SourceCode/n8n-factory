@@ -57,9 +57,13 @@ def test_tree_full(mock_console):
 # --- Profile Tests ---
 @patch("n8n_factory.commands.profile.console")
 def test_profile_not_found(mock_console, tmp_path):
+    cwd = os.getcwd()
     os.chdir(tmp_path)
-    profile_command("missing")
-    assert "not found" in str(mock_console.print.call_args_list)
+    try:
+        profile_command("missing")
+        assert "not found" in str(mock_console.print.call_args_list)
+    finally:
+        os.chdir(cwd)
 
 @patch("n8n_factory.commands.profile.console")
 def test_profile_success(mock_console, tmp_path):
